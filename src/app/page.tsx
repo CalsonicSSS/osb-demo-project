@@ -1,6 +1,10 @@
+import CustomersTable from '@/components/CustomersTable'
 import ThemeToggle from '@/components/ThemeToggle'
+import { getAllCustomers } from '@/supabase/calls'
 
 export default async function Index() {
+  const customers = await getAllCustomers()
+
   return (
     <div className="flex w-full flex-1 flex-col items-center gap-20">
       <nav className="flex h-16 w-full justify-center border-b border-b-foreground/10">
@@ -9,7 +13,7 @@ export default async function Index() {
 
       <div className="flex max-w-4xl flex-1 flex-col gap-20 px-3">
         <main className="flex flex-1 flex-col gap-6">
-          <p>hi</p>
+          <CustomersTable customers={customers ?? []} />
         </main>
       </div>
 
