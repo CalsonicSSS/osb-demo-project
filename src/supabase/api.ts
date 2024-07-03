@@ -11,3 +11,18 @@ export const getAllCustomers = async () => {
     return null
   }
 }
+
+export const getCustomerById = async (id: string) => {
+  const cookieStore = cookies()
+  const supabase = createServerClient(cookieStore)
+  try {
+    const { data: customer } = await supabase
+      .from('ar_customer')
+      .select('*')
+      .eq('id', id)
+      .single()
+    return customer
+  } catch (error) {
+    return null
+  }
+}

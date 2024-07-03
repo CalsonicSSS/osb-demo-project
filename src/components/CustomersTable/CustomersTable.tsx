@@ -18,6 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import TableSearch from '@/components/TableSearch'
 import TableColDropdown from '@/components/TableColDropdown'
@@ -29,11 +30,13 @@ type CustomersTableProps = {
 }
 
 const CustomersTable = ({ customers }: CustomersTableProps) => {
+  const { push } = useRouter()
+
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([
-    { id: 'sale_date', desc: true },
+    { id: 'name', desc: false },
   ])
 
   const table = useReactTable({
@@ -88,6 +91,7 @@ const CustomersTable = ({ customers }: CustomersTableProps) => {
                 <TableRow
                   key={rowId}
                   data-state={getIsSelected() && 'selected'}
+                  onClick={() => push(`/${rowId}`)}
                 >
                   {getVisibleCells().map(
                     ({ id: cellId, column, getContext }) => (
