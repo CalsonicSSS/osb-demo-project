@@ -1,3 +1,4 @@
+import GenerateEmailDialog from '@/components/GenerateEmailDialog'
 import { getCustomerById } from '@/supabase/api'
 import { redirect } from 'next/navigation'
 
@@ -10,7 +11,8 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
 
   return (
     <div>
-      <h1>Hello, {name}!</h1>
+      <h1 className="pb-5">Hello, {name}!</h1>
+      <GenerateEmailDialog companyName={name ?? ''} />
     </div>
   )
 }
