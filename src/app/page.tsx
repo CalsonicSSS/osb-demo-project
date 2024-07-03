@@ -1,7 +1,7 @@
 import React from 'react'
 import CustomersTable from '@/components/CustomersTable'
 import ThemeToggle from '@/components/ThemeToggle'
-import { getAllCustomers } from '@/supabase/calls'
+import { getAllCustomers } from '@/supabase/api'
 
 export default async function Index() {
   const customers = await getAllCustomers()
