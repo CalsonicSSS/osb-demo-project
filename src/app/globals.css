@@ -57,3 +57,15 @@
     @apply bg-background text-foreground;
   }
 }
+
+.icon {
+  fill: black;
+}
+
+.icon:hover {
+  fill: white;
+}
+
+.top-nav-text-color {
+  color: #0c66e4;
+}
