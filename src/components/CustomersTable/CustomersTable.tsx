@@ -24,6 +24,8 @@ import TableSearch from '@/components/TableSearch'
 import TableColDropdown from '@/components/TableColDropdown'
 import { Customer } from '@/typings/customer'
 import CustomersTableCols from './CustomersTableCols'
+import useLocalStorageState from '@/hooks/useLocalStorageState'
+import { Tab } from '@/typings/tabs'
 
 type CustomersTableProps = {
   customers: Customer[]
@@ -31,6 +33,10 @@ type CustomersTableProps = {
 
 const CustomersTable = ({ customers }: CustomersTableProps) => {
   const { push } = useRouter()
+
+  const [_, setTabs] = useLocalStorageState<Tab[]>('tabs', {
+    defaultValue: [{ key: 'All Customers', route: '/' }],
+  })
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -87,27 +93,42 @@ const CustomersTable = ({ customers }: CustomersTableProps) => {
           {table.getRowModel().rows?.length ? (
             table
               .getRowModel()
-              .rows.map(({ id: rowId, getIsSelected, getVisibleCells }) => (
-                <TableRow
-                  key={rowId}
-                  data-state={getIsSelected() && 'selected'}
-                  onClick={() => push(`/${rowId}`)}
-                >
-                  {getVisibleCells().map(
-                    ({ id: cellId, column, getContext }) => (
-                      <TableCell
-                        key={cellId}
-                        style={{
-                          width: `${column.columnDef.size}px`,
-                          maxWidth: `${column.columnDef.maxSize}px`,
-                        }}
-                      >
-                        {flexRender(column.columnDef.cell, getContext())}
-                      </TableCell>
-                    ),
-                  )}
-                </TableRow>
-              ))
+              .rows.map(
+                ({ id: rowId, getIsSelected, getVisibleCells, original }) => (
+                  <TableRow
+                    key={rowId}
+                    data-state={getIsSelected() && 'selected'}
+                    onClick={() => {
+                      setTabs((prevTabs) => {
+                        if (prevTabs?.find(({ key }) => key === rowId)) {
+                          return prevTabs
+                        }
+
+                        return [
+                          ...(prevTabs ?? []),
+                          { key: original?.name ?? '', route: `/${rowId}` },
+                        ]
+                      })
+
+                      push(`/${rowId}`)
+                    }}
+                  >
+                    {getVisibleCells().map(
+                      ({ id: cellId, column, getContext }) => (
+                        <TableCell
+                          key={cellId}
+                          style={{
+                            width: `${column.columnDef.size}px`,
+                            maxWidth: `${column.columnDef.maxSize}px`,
+                          }}
+                        >
+                          {flexRender(column.columnDef.cell, getContext())}
+                        </TableCell>
+                      ),
+                    )}
+                  </TableRow>
+                ),
+              )
           ) : (
             <TableRow>
               <TableCell
