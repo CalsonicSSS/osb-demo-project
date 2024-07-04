@@ -5,6 +5,7 @@ import { Analytics } from '@vercel/analytics/react'
 import './globals.css'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import ReactQueryProvider from '@/providers/ReactQueryProvider'
+import Sidebar from '@/components/SideBar/SideBar'
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -36,11 +37,26 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ReactQueryProvider>
-            <main className="flex min-h-screen flex-col items-center">
-              {children}
-              <Analytics />{' '}
-              {/* ^^ remove this if you are not deploying to vercel. See more at https://vercel.com/docs/analytics  */}
-            </main>
+            <div className="flex min-h-screen">
+              {/* left side side bar */}
+              <Sidebar />
+              {/* -------------------------------------------------------------- */}
+              {/* right side content (top nav + main) */}
+              <div className="w-full ">
+                {/* top nav */}
+                <div className="mb-5 flex flex-col items-start border-b-2 border-gray-300 pl-10 pt-5">
+                  <p className="top-nav-text-color mb-[-2px] border-b-2 border-blue-500 pb-1 font-semibold">
+                    All Customers
+                  </p>
+                </div>
+
+                {/* main table content */}
+                <main>
+                  {children}
+                  <Analytics />
+                </main>
+              </div>
+            </div>
             <ReactQueryDevtools initialIsOpen={false} />
           </ReactQueryProvider>
         </ThemeProvider>
