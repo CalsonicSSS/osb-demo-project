@@ -1,7 +1,7 @@
 import {
   getCustomerById,
+  getCustomerInvoicesWithProducts,
   getCustomerInvoiceRefs,
-  getCustomerInvoices,
   getCustomerInvoicesPay,
 } from '@/supabase/api'
 import { redirect } from 'next/navigation'
@@ -15,11 +15,13 @@ import InventoryTable from '@/components/InventoryTable/InventoryTable'
 import { Invoice, InvoicePay, InvoiceRef } from '@/typings/invoicing'
 
 const CustomerPage = async ({ params }: { params: { id: string } }) => {
+  const { id } = params
+
   const [customer, invoices, invoicesPay, invoiceRefs] = await Promise.all([
-    getCustomerById(params.id),
-    getCustomerInvoices(params.id),
-    getCustomerInvoicesPay(params.id),
-    getCustomerInvoiceRefs(params.id),
+    getCustomerById(id),
+    getCustomerInvoicesWithProducts(id),
+    getCustomerInvoicesPay(id),
+    getCustomerInvoiceRefs(id),
   ])
 
   if (!customer) redirect('/404')
@@ -47,7 +49,10 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
           <AccordionItem value="item-1">
             <AccordionTrigger>Invoices</AccordionTrigger>
             <AccordionContent>
-              <InventoryTable invoices={formattedInvoices ?? []} />
+              <InventoryTable
+                invoices={formattedInvoices ?? []}
+                companyName={customer.name ?? ''}
+              />
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2">
@@ -64,15 +69,22 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
   )
 }
 
+type InvoiceWithProducts = Pick<
+  Invoice,
+  'currency_value' | 'invoice_bal1' | 'id'
+> & {
+  products: { stock_description: string | null }[] | null
+}
+
 const formatDataForTable = (
-  invoices: Pick<Invoice, 'currency_value' | 'invoice_bal1' | 'id'>[],
+  invoices: InvoiceWithProducts[],
   invoicesPay: Pick<InvoicePay, 'id' | 'trn_value'>[],
   invoiceRefs: Pick<InvoiceRef, 'id' | 'sales_order_id' | 'document_type'>[],
 ) => {
   return invoices.map((invoice) => {
     const invoicePays = invoicesPay
       .filter((invoicePay) => invoicePay.id === invoice.id)
-      .reduce((acc, curr) => acc + curr.trn_value ?? 0, 0)
+      .reduce((acc, curr) => acc + curr.trn_value, 0)
 
     const salesOrderId =
       invoiceRefs?.find((invoiceRef) => invoiceRef.id === invoice.id)
@@ -82,6 +94,11 @@ const formatDataForTable = (
       invoiceRefs?.find((invoiceRef) => invoiceRef.id === invoice.id)
         ?.document_type ?? ''
 
+    const stockDesc =
+      invoice?.products
+        ?.map((product) => product.stock_description)
+        .join(', ') ?? ''
+
     return {
       id: invoice.id,
       invoice_bal1: invoice.invoice_bal1,
@@ -89,6 +106,7 @@ const formatDataForTable = (
       trn_value: invoicePays,
       sales_order_id: salesOrderId,
       document_type: documentType,
+      stock_description: stockDesc,
     }
   })
 }

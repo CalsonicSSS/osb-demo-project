@@ -19,27 +19,25 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import TableSearch from '@/components/TableSearch'
-import TableColDropdown from '@/components/TableColDropdown'
 import InventoryTableCols from './InventoryTableCols'
 import { Button } from '@/components/ui/button'
 import { InvoiceTableRow } from '@/typings/invoicing'
+import GenerateEmailDialog from '../GenerateEmailDialog'
 
 type InventoryTableProps = {
   invoices: InvoiceTableRow[]
+  companyName: string
 }
 
-const InventoryTable = ({ invoices }: InventoryTableProps) => {
+const InventoryTable = ({ invoices, companyName }: InventoryTableProps) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([
     { id: 'invoice_bal1', desc: false },
   ])
-
-  console.log(invoices)
 
   const table = useReactTable({
     data: invoices,
@@ -56,17 +54,19 @@ const InventoryTable = ({ invoices }: InventoryTableProps) => {
     state: { sorting, columnFilters, columnVisibility, rowSelection },
   })
 
+  const hasSelection = Object.keys(rowSelection).length > 0
+
   return (
     <>
-      <div className="items-center justify-between bg-background px-4 sm:flex">
+      <div className="mb-4 items-center justify-between bg-background px-4 sm:flex">
         <TableSearch
-          columnId="name"
+          columnId="invoice_bal1"
           table={table}
-          placeholder="Filter customers by name..."
+          placeholder="Filter invoices by id..."
           className="sm:max-w-sm"
         />
         <div className="mt-3 flex justify-end gap-2 sm:mt-0 sm:justify-normal">
-          <TableColDropdown table={table} />
+          {hasSelection && <GenerateEmailDialog companyName={companyName} />}
         </div>
       </div>
 
@@ -90,28 +90,20 @@ const InventoryTable = ({ invoices }: InventoryTableProps) => {
           {table.getRowModel().rows?.length ? (
             table
               .getRowModel()
-              .rows.map(
-                ({ id: rowId, getIsSelected, getVisibleCells, original }) => (
-                  <TableRow
-                    key={rowId}
-                    data-state={getIsSelected() && 'selected'}
-                  >
-                    {getVisibleCells().map(
-                      ({ id: cellId, column, getContext }) => (
-                        <TableCell
-                          key={cellId}
-                          style={{
-                            width: `${column.columnDef.size}px`,
-                            maxWidth: `${column.columnDef.maxSize}px`,
-                          }}
-                        >
-                          {flexRender(column.columnDef.cell, getContext())}
-                        </TableCell>
-                      ),
-                    )}
-                  </TableRow>
-                ),
-              )
+              .rows.map(({ id: rowId, getIsSelected, getVisibleCells }) => (
+                <TableRow
+                  key={rowId}
+                  data-state={getIsSelected() && 'selected'}
+                >
+                  {getVisibleCells().map(
+                    ({ id: cellId, column, getContext }) => (
+                      <TableCell key={cellId}>
+                        {flexRender(column.columnDef.cell, getContext())}
+                      </TableCell>
+                    ),
+                  )}
+                </TableRow>
+              ))
           ) : (
             <TableRow>
               <TableCell

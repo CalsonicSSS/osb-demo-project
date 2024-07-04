@@ -20,7 +20,9 @@ const GenerateEmailDialog = ({ companyName }: GenerateEmailDialogProps) => {
 
   return (
     <Dialog>
-      <DialogTrigger>Open dialog</DialogTrigger>
+      <DialogTrigger asChild>
+        <Button>Generate Email</Button>
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Email gen test</DialogTitle>

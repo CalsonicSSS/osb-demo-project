@@ -64,7 +64,7 @@ const CustomersTable = ({ customers }: CustomersTableProps) => {
 
   return (
     <>
-      <div className="items-center justify-between bg-background px-4 sm:flex">
+      <div className="items-center justify-between bg-background px-4 pb-4 sm:flex">
         <TableSearch
           columnId="name"
           table={table}
@@ -99,6 +99,7 @@ const CustomersTable = ({ customers }: CustomersTableProps) => {
               .rows.map(
                 ({ id: rowId, getIsSelected, getVisibleCells, original }) => (
                   <TableRow
+                    className="cursor-pointer"
                     key={rowId}
                     data-state={getIsSelected() && 'selected'}
                     onClick={() => {

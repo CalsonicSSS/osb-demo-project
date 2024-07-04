@@ -359,7 +359,7 @@ export type Database = {
       }
       sor_detail_rep: {
         Row: {
-          back_order_qty: string | null
+          back_order_qty: number
           customer_request_date: string | null
           id: string
           invoice_id: string
@@ -375,7 +375,7 @@ export type Database = {
           unit_cost: string | null
         }
         Insert: {
-          back_order_qty?: string | null
+          back_order_qty: number
           customer_request_date?: string | null
           id: string
           invoice_id: string
@@ -391,7 +391,7 @@ export type Database = {
           unit_cost?: string | null
         }
         Update: {
-          back_order_qty?: string | null
+          back_order_qty?: number
           customer_request_date?: string | null
           id?: string
           invoice_id?: string

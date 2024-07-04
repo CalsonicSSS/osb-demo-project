@@ -68,3 +68,31 @@ export const getCustomerInvoiceRefs = async (id: string) => {
     return null
   }
 }
+
+export const getInvoiceProducts = async (id: string) => {
+  const cookieStore = cookies()
+  const supabase = createServerClient(cookieStore)
+  try {
+    const { data: products } = await supabase
+      .from('sor_detail_rep')
+      .select('stock_description')
+      .eq('invoice_id', id)
+    return products
+  } catch (error) {
+    return null
+  }
+}
+
+export const getCustomerInvoicesWithProducts = async (userId: string) => {
+  const invoices = await getCustomerInvoices(userId)
+  const invoiceIds = invoices?.map((invoice) => invoice.id) ?? []
+  const products = await Promise.all(
+    invoiceIds?.map((id) => getInvoiceProducts(id)),
+  )
+  return invoices?.map((invoice, index) => {
+    return {
+      ...invoice,
+      products: products[index],
+    }
+  })
+}
