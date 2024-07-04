@@ -11,7 +11,7 @@ import SidebarMenuItem from './SidebarMenuItem'
 
 export default function SidebarMenu() {
   return (
-    <div className="bg-mutedp-4 flex h-screen w-64 flex-col border-r">
+    <div className="flex h-screen w-64 flex-col border-r">
       <div className="my-5 flex items-center justify-center">
         <Image
           src="/logo.png"

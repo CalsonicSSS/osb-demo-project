@@ -8,6 +8,7 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
+  getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
 import {
@@ -26,6 +27,7 @@ import { Customer } from '@/typings/customer'
 import CustomersTableCols from './CustomersTableCols'
 import useLocalStorageState from '@/hooks/useLocalStorageState'
 import { Tab } from '@/typings/tabs'
+import { Button } from '@/components/ui/button'
 
 type CustomersTableProps = {
   customers: Customer[]
@@ -34,7 +36,9 @@ type CustomersTableProps = {
 const CustomersTable = ({ customers }: CustomersTableProps) => {
   const { push } = useRouter()
 
-  const [_, setTabs] = useLocalStorageState<Tab[]>('tabs', { defaultValue: [] })
+  const [tabs, setTabs] = useLocalStorageState<Tab[]>('tabs', {
+    defaultValue: [],
+  })
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -52,6 +56,7 @@ const CustomersTable = ({ customers }: CustomersTableProps) => {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     state: { sorting, columnFilters, columnVisibility, rowSelection },
@@ -59,7 +64,7 @@ const CustomersTable = ({ customers }: CustomersTableProps) => {
 
   return (
     <>
-      <div className="items-center justify-between bg-background sm:flex">
+      <div className="items-center justify-between bg-background px-4 sm:flex">
         <TableSearch
           columnId="name"
           table={table}
@@ -97,16 +102,22 @@ const CustomersTable = ({ customers }: CustomersTableProps) => {
                     key={rowId}
                     data-state={getIsSelected() && 'selected'}
                     onClick={() => {
-                      setTabs((prevTabs) => {
-                        if (prevTabs?.find(({ key }) => key === rowId)) {
-                          return prevTabs
-                        }
+                      const tabExists = tabs?.find(
+                        ({ key }) => key === original.name,
+                      )
 
-                        return [
-                          ...(prevTabs ?? []),
-                          { key: original?.name ?? '', route: `/${rowId}` },
-                        ]
-                      })
+                      if (!tabExists) {
+                        setTabs((prevTabs) => {
+                          if (prevTabs?.find(({ key }) => key === rowId)) {
+                            return prevTabs
+                          }
+
+                          return [
+                            ...(prevTabs ?? []),
+                            { key: original?.name ?? '', route: `/${rowId}` },
+                          ]
+                        })
+                      }
 
                       push(`/${rowId}`)
                     }}
@@ -139,6 +150,24 @@ const CustomersTable = ({ customers }: CustomersTableProps) => {
           )}
         </TableBody>
       </Table>
+      <div className="flex items-center justify-end space-x-2 p-4 ">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          Next
+        </Button>
+      </div>
     </>
   )
 }

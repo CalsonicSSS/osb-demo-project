@@ -4,7 +4,6 @@ import NextTopLoader from 'nextjs-toploader'
 import './globals.css'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import ReactQueryProvider from '@/providers/ReactQueryProvider'
-import SidebarMenu from '@/components/SidebarMenu/SidebarMenu'
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -26,7 +25,7 @@ export default function RootLayout({
       className={GeistSans.className}
       style={{ colorScheme: 'light' }}
     >
-      <body className="bg-background text-foreground">
+      <body className="h-full">
         <NextTopLoader showSpinner={false} height={2} color="#2acf80" />
         <ThemeProvider
           attribute="class"
@@ -35,12 +34,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <ReactQueryProvider>
-            <div className="flex min-h-screen">
-              <SidebarMenu />
-              <div className="w-full">
-                <main>{children}</main>
-              </div>
-            </div>
+            {children}
             <ReactQueryDevtools initialIsOpen={false} />
           </ReactQueryProvider>
         </ThemeProvider>

@@ -6,6 +6,7 @@ import { Tab } from '@/typings/tabs'
 import Link from 'next/link'
 import { Cross1Icon } from '@radix-ui/react-icons'
 import { usePathname, useRouter } from 'next/navigation'
+import SidebarMenu from '@/components/SidebarMenu/SidebarMenu'
 
 const CustomersLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname()
@@ -19,46 +20,50 @@ const CustomersLayout = ({ children }: { children: React.ReactNode }) => {
   const isRouteCurrentTab = (route: string) => pathname === route
 
   return (
-    <div className="flex w-full flex-1 flex-col items-center">
-      <nav className="flex w-full justify-center border-b border-b-foreground/10">
-        <Tabs
-          defaultValue="All Customers"
-          className="w-full"
-          value={
-            tabs?.find(({ route }) => isRouteCurrentTab(route))?.key ??
-            'All Customers'
-          }
-        >
-          <TabsList>
-            <TabsTrigger
-              value="All Customers"
-              className="flex justify-between gap-2"
+    <div className="flex h-screen flex-col bg-background">
+      <div className="flex h-full flex-1 sm:h-full">
+        <SidebarMenu />
+        <main className="flex h-full w-full flex-col overflow-hidden">
+          <nav className="flex w-full justify-center border-b border-b-foreground/10">
+            <Tabs
+              defaultValue="All Customers"
+              className="w-full"
+              value={
+                tabs?.find(({ route }) => isRouteCurrentTab(route))?.key ??
+                'All Customers'
+              }
             >
-              <Link href="/">All Customers</Link>
-            </TabsTrigger>
+              <TabsList>
+                <TabsTrigger
+                  value="All Customers"
+                  className="flex justify-between gap-2"
+                >
+                  <Link href="/">All Customers</Link>
+                </TabsTrigger>
 
-            {tabs?.map(({ key, route }) => (
-              <TabsTrigger
-                key={key}
-                value={key}
-                className="flex justify-between gap-2"
-              >
-                <Link href={route}>{key}</Link>
-                <Cross1Icon
-                  onClick={() => {
-                    removeTab(key)
-                    if (isRouteCurrentTab(route)) {
-                      push('/')
-                    }
-                  }}
-                />
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
-      </nav>
-
-      <div className="max-w-4xl">{children}</div>
+                {tabs?.map(({ key, route }) => (
+                  <TabsTrigger
+                    key={key}
+                    value={key}
+                    className="flex justify-between gap-2"
+                  >
+                    <Link href={route}>{key}</Link>
+                    <Cross1Icon
+                      onClick={() => {
+                        removeTab(key)
+                        if (isRouteCurrentTab(route)) {
+                          push('/')
+                        }
+                      }}
+                    />
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+          </nav>
+          {children}
+        </main>
+      </div>
     </div>
   )
 }
