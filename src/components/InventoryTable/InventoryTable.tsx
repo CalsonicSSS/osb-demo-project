@@ -23,32 +23,26 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import TableSearch from '@/components/TableSearch'
 import TableColDropdown from '@/components/TableColDropdown'
-import { Customer } from '@/typings/customer'
 import InventoryTableCols from './InventoryTableCols'
-import useLocalStorageState from '@/hooks/useLocalStorageState'
-import { Tab } from '@/typings/tabs'
 import { Button } from '@/components/ui/button'
+import { InvoiceTableRow } from '@/typings/invoicing'
 
 type InventoryTableProps = {
-  customers: Customer[]
+  invoices: InvoiceTableRow[]
 }
 
-const InventoryTable = ({ customers }: InventoryTableProps) => {
-  const { push } = useRouter()
-
-  const [tabs, setTabs] = useLocalStorageState<Tab[]>('tabs', {
-    defaultValue: [],
-  })
-
+const InventoryTable = ({ invoices }: InventoryTableProps) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([
-    { id: 'name', desc: false },
+    { id: 'invoice_bal1', desc: false },
   ])
 
+  console.log(invoices)
+
   const table = useReactTable({
-    data: customers,
+    data: invoices,
     onSortingChange: setSorting,
     getRowId: (row) => row.id,
     onColumnFiltersChange: setColumnFilters,
@@ -101,26 +95,6 @@ const InventoryTable = ({ customers }: InventoryTableProps) => {
                   <TableRow
                     key={rowId}
                     data-state={getIsSelected() && 'selected'}
-                    onClick={() => {
-                      const tabExists = tabs?.find(
-                        ({ key }) => key === original.name,
-                      )
-
-                      if (!tabExists) {
-                        setTabs((prevTabs) => {
-                          if (prevTabs?.find(({ key }) => key === rowId)) {
-                            return prevTabs
-                          }
-
-                          return [
-                            ...(prevTabs ?? []),
-                            { key: original?.name ?? '', route: `/${rowId}` },
-                          ]
-                        })
-                      }
-
-                      push(`/${rowId}`)
-                    }}
                   >
                     {getVisibleCells().map(
                       ({ id: cellId, column, getContext }) => (

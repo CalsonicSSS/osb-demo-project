@@ -142,8 +142,8 @@ export type Database = {
           customer_po_number: string | null
           document_type: string
           id: string
-          invoice_bal1: string | null
-          invoice_bal1_1: string | null
+          invoice_bal1: number | null
+          invoice_bal1_1: number | null
           invoice_bal3: string | null
           invoice_date: string | null
           org_disc_value: string | null
@@ -159,8 +159,8 @@ export type Database = {
           customer_po_number?: string | null
           document_type?: string
           id: string
-          invoice_bal1?: string | null
-          invoice_bal1_1?: string | null
+          invoice_bal1?: number | null
+          invoice_bal1_1?: number | null
           invoice_bal3?: string | null
           invoice_date?: string | null
           org_disc_value?: string | null
@@ -176,8 +176,8 @@ export type Database = {
           customer_po_number?: string | null
           document_type?: string
           id?: string
-          invoice_bal1?: string | null
-          invoice_bal1_1?: string | null
+          invoice_bal1?: number | null
+          invoice_bal1_1?: number | null
           invoice_bal3?: string | null
           invoice_date?: string | null
           org_disc_value?: string | null
@@ -211,7 +211,7 @@ export type Database = {
           sales_order: string | null
           trn_month: number | null
           trn_type: string | null
-          trn_value: number | null
+          trn_value: number
           trn_year: number | null
         }
         Insert: {
@@ -227,7 +227,7 @@ export type Database = {
           sales_order?: string | null
           trn_month?: number | null
           trn_type?: string | null
-          trn_value?: number | null
+          trn_value: number
           trn_year?: number | null
         }
         Update: {
@@ -243,7 +243,7 @@ export type Database = {
           sales_order?: string | null
           trn_month?: number | null
           trn_type?: string | null
-          trn_value?: number | null
+          trn_value?: number
           trn_year?: number | null
         }
         Relationships: [

@@ -144,7 +144,7 @@ const CustomersTable = ({ customers }: CustomersTableProps) => {
                 colSpan={CustomersTableCols.length}
                 className="h-24 text-center"
               >
-                No customers found
+                No invoices found
               </TableCell>
             </TableRow>
           )}
