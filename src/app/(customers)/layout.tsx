@@ -6,7 +6,7 @@ import { Tab } from '@/typings/tabs'
 import Link from 'next/link'
 import { Cross1Icon } from '@radix-ui/react-icons'
 import { usePathname, useRouter } from 'next/navigation'
-import SidebarMenu from '@/components/SidebarMenu/SidebarMenu'
+import SidebarMenu from '@/components/SidebarMenu'
 
 const CustomersLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname()

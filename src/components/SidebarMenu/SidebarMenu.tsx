@@ -34,34 +34,10 @@ export default function SidebarMenu() {
 }
 
 const SIDEBAR_ITEMS = [
-  {
-    icon: <HomeIcon className="h-4 w-4 stroke-2" />,
-    href: '#',
-    label: 'Dashboard',
-  },
-  {
-    icon: <PersonIcon />,
-    href: '/',
-    label: 'Customers',
-  },
-  {
-    icon: <ListBulletIcon />,
-    href: '#',
-    label: 'Orders',
-  },
-  {
-    icon: <HomeIcon />,
-    href: '#',
-    label: 'AR Management',
-  },
-  {
-    icon: <ArchiveIcon />,
-    href: '#',
-    label: 'Products',
-  },
-  {
-    icon: <ChatBubbleIcon />,
-    href: '#',
-    label: 'Inbox',
-  },
+  { icon: <HomeIcon />, href: '#', label: 'Dashboard' },
+  { icon: <PersonIcon />, href: '/', label: 'Customers' },
+  { icon: <ListBulletIcon />, href: '#', label: 'Orders' },
+  { icon: <HomeIcon />, href: '#', label: 'AR Management' },
+  { icon: <ArchiveIcon />, href: '#', label: 'Products' },
+  { icon: <ChatBubbleIcon />, href: '#', label: 'Inbox' },
 ]

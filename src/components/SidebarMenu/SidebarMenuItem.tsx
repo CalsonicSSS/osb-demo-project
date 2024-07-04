@@ -1,7 +1,4 @@
-'use client'
-
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { cn } from '@/utils/tailwind'
 
 type SidebarMenuItemProps = {
@@ -10,24 +7,17 @@ type SidebarMenuItemProps = {
   label: string
 }
 
-export default function SidebarMenuItem({
-  icon,
-  label,
-  href,
-}: SidebarMenuItemProps) {
-  const activePath = usePathname()
-  const isActive = activePath === href
+const SidebarMenuItem = ({ icon, label, href }: SidebarMenuItemProps) => (
+  <Link
+    href={href}
+    className={cn(
+      'flex w-full items-center justify-start gap-4 rounded-md  p-2 hover:bg-muted/40 ',
+      label === 'Customers' ? 'bg-muted  hover:bg-muted' : '',
+    )}
+  >
+    {icon}
+    <span className="hidden md:inline">{label}</span>
+  </Link>
+)
 
-  return (
-    <Link
-      href={href}
-      className={cn(
-        'flex w-full items-center justify-start gap-4 rounded-md  p-2 hover:bg-muted/40 ',
-        isActive ? 'bg-muted  hover:bg-muted' : '',
-      )}
-    >
-      {icon}
-      <span className="hidden md:inline">{label}</span>
-    </Link>
-  )
-}
+export default SidebarMenuItem
