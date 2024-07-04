@@ -5,9 +5,15 @@ type SidebarMenuItemProps = {
   icon: React.ReactNode
   href: string
   label: string
+  isCollapsed: boolean
 }
 
-const SidebarMenuItem = ({ icon, label, href }: SidebarMenuItemProps) => (
+const SidebarMenuItem = ({
+  icon,
+  label,
+  href,
+  isCollapsed,
+}: SidebarMenuItemProps) => (
   <Link
     href={href}
     className={cn(
@@ -16,7 +22,11 @@ const SidebarMenuItem = ({ icon, label, href }: SidebarMenuItemProps) => (
     )}
   >
     {icon}
-    <span className="hidden md:inline">{label}</span>
+    {!isCollapsed && (
+      <span className="hidden whitespace-nowrap font-semibold md:inline">
+        {label}
+      </span>
+    )}
   </Link>
 )
 

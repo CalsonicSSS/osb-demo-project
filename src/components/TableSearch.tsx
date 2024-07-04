@@ -18,9 +18,10 @@ const TableSearch = <TData extends object>({
     placeholder={placeholder}
     value={(table.getColumn(columnId)?.getFilterValue() as string) ?? ''}
     onChange={(event) =>
-      table.getColumn('name')?.setFilterValue(event.target.value)
+      table.getColumn(columnId)?.setFilterValue(event.target.value)
     }
     className={className}
   />
 )
+
 export default TableSearch

@@ -277,8 +277,22 @@ module.exports = {
         'fade-in': 'fade-in 0.4s',
         'fade-out': 'fade-out 0.4s',
       },
+      scrollbar: {
+        width: '8px',
+        height: '8px',
+        track: {
+          background: 'transparent',
+        },
+        thumb: {
+          backgroundColor: 'rgba(155, 155, 155, 0.7)',
+          borderRadius: '20px',
+          border: 'transparent',
+        },
+      },
     },
   },
-  // eslint-disable-next-line global-require
-  plugins: [require('tailwindcss-animate')],
+  plugins: [
+    require('tailwindcss-animate'),
+    require('tailwind-scrollbar')({ nocompatible: true }),
+  ],
 }

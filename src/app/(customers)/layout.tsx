@@ -7,8 +7,11 @@ import Link from 'next/link'
 import { Cross1Icon } from '@radix-ui/react-icons'
 import { usePathname, useRouter } from 'next/navigation'
 import SidebarMenu from '@/components/SidebarMenu'
+import { useState } from 'react'
 
 const CustomersLayout = ({ children }: { children: React.ReactNode }) => {
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+
   const pathname = usePathname()
   const { push } = useRouter()
 
@@ -20,10 +23,17 @@ const CustomersLayout = ({ children }: { children: React.ReactNode }) => {
   const isRouteCurrentTab = (route: string) => pathname === route
 
   return (
-    <div className="flex h-screen flex-col bg-background">
+    <div className="flex h-screen flex-col overflow-hidden bg-background">
       <div className="flex h-full flex-1 sm:h-full">
-        <SidebarMenu />
-        <main className="flex h-full w-full flex-col overflow-hidden">
+        <SidebarMenu
+          isCollapsed={isSidebarCollapsed}
+          setIsCollapsed={setIsSidebarCollapsed}
+        />
+        <main
+          className={`flex h-full flex-col overflow-hidden transition-all duration-300 ${
+            isSidebarCollapsed ? 'w-[calc(100%-4rem)]' : 'w-[calc(100%-16rem)]'
+          }`}
+        >
           <nav className="flex w-full justify-center border-b border-b-foreground/10">
             <Tabs
               defaultValue="All Customers"
@@ -61,7 +71,7 @@ const CustomersLayout = ({ children }: { children: React.ReactNode }) => {
               </TabsList>
             </Tabs>
           </nav>
-          {children}
+          <div className="flex-1 overflow-hidden p-6">{children}</div>
         </main>
       </div>
     </div>

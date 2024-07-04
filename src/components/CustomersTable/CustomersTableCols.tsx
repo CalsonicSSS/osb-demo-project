@@ -1,128 +1,99 @@
 'use client'
 
-import { Customer } from '@/typings/customer'
+import { CustomerWithCustomMetrics } from '@/typings/customer'
+import { formatCurrency } from '@/utils/format'
 import { ColumnDef } from '@tanstack/react-table'
 
-const CustomersTableCols: ColumnDef<Customer>[] = [
+const CustomersTableCols: ColumnDef<CustomerWithCustomMetrics>[] = [
   {
-    size: 200,
     accessorKey: 'name',
     header: 'Name',
+    size: 200,
+    cell: ({ row }) => (
+      <div className="whitespace-nowrap">{row.getValue('name')}</div>
+    ),
   },
   {
+    accessorKey: 'id',
+    header: 'Customer ID',
     size: 200,
-    accessorKey: 'contact',
-    header: 'Contact',
+    cell: ({ row }) => (
+      <div className="whitespace-nowrap">{row.getValue('id')}</div>
+    ),
   },
   {
-    size: 200,
-    accessorKey: 'credit_check_flag',
-    header: 'Credit Check Flag',
-  },
-  {
-    size: 200,
-    accessorKey: 'credit_limit',
-    header: 'Credit Limit',
-  },
-  {
-    size: 200,
-    accessorKey: 'credit_status',
-    header: 'Credit Status',
-  },
-  {
-    size: 200,
-    accessorKey: 'currency',
-    header: 'Currency',
-  },
-  {
-    size: 200,
-    accessorKey: 'current_balance',
-    header: 'Current Balance',
-  },
-  {
-    size: 200,
-    accessorKey: 'customer_on_hold',
-    header: 'Customer On Hold',
-  },
-  {
-    size: 200,
-    accessorKey: 'customer_type',
-    header: 'Customer Type',
-  },
-  {
-    size: 200,
-    accessorKey: 'data_last_pay',
-    header: 'Data Last Pay',
-  },
-  {
-    size: 200,
-    accessorKey: 'date_last_sale',
-    header: 'Date Last Sale',
-  },
-  {
-    size: 200,
-    accessorKey: 'domain',
-    header: 'Domain',
-  },
-  {
-    size: 200,
     accessorKey: 'email',
     header: 'Email',
+    size: 200,
+    cell: ({ row }) => (
+      <div className="whitespace-nowrap">{row.getValue('email')}</div>
+    ),
   },
   {
+    accessorKey: 'date_last_sale',
+    header: 'Last Sale Date',
     size: 200,
-    accessorKey: 'fax',
-    header: 'Fax',
+    cell: ({ row }) => (
+      <div className="whitespace-nowrap">{row.getValue('date_last_sale')}</div>
+    ),
   },
   {
+    accessorKey: 'credit_limit',
+    header: 'Credit Limit',
     size: 200,
-    accessorKey: 'highest_balance',
-    header: 'Highest Balance',
+    cell: ({ row }) => (
+      <div className="whitespace-nowrap">{row.getValue('credit_limit')}</div>
+    ),
   },
   {
+    accessorKey: 'current_balance',
+    header: 'Current Balance',
     size: 200,
-    accessorKey: 'id',
-    header: 'ID',
+    cell: ({ row }) => (
+      <div className="whitespace-nowrap">
+        {formatCurrency(row.getValue('current_balance'))}
+      </div>
+    ),
   },
   {
+    accessorKey: 'salesperson',
+    header: 'AM ID',
     size: 200,
+    cell: ({ row }) => (
+      <div className="whitespace-nowrap">{row.getValue('salesperson')}</div>
+    ),
+  },
+  {
     accessorKey: 'invoice_count',
     header: 'Invoice Count',
+    size: 200,
+    cell: ({ row }) => (
+      <div className="whitespace-nowrap">{row.getValue('invoice_count')}</div>
+    ),
   },
   {
+    accessorKey: 'invoice_unpaid',
+    header: 'Invoice Unpaid',
     size: 200,
-    accessorKey: 'mtr_cr_memo_val',
-    header: 'Mtr Cr Memo Val',
+    cell: ({ row }) => (
+      <div className="whitespace-nowrap">{row.getValue('invoice_unpaid')}</div>
+    ),
   },
   {
+    accessorKey: 'sor_qty',
+    header: 'Sor Qty',
     size: 200,
-    accessorKey: 'num_outst_ord',
-    header: 'Num Outst Ord',
+    cell: ({ row }) => (
+      <div className="whitespace-nowrap">{row.getValue('sor_qty')}</div>
+    ),
   },
   {
+    accessorKey: 'back_order_qty',
+    header: 'Back Orders Qty',
     size: 200,
-    accessorKey: 'outst_ord_val',
-    header: 'Outst Ord Val',
-  },
-  {
-    size: 200,
-    accessorKey: 'phone_ext',
-    header: 'Phone Ext',
-  },
-  {
-    size: 200,
-    accessorKey: 'phone_no',
-    header: 'Phone No',
-  },
-  {
-    size: 200,
-    accessorKey: 'po_number_mandatory',
-    header: 'PO Number Mandatory',
-  },
-  {
-    size: 200,
-    accessorKey: 'salesperson',
-    header: 'Salesperson',
+    cell: ({ row }) => (
+      <div className="whitespace-nowrap">{row.getValue('back_order_qty')}</div>
+    ),
   },
 ]
 

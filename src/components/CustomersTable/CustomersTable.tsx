@@ -20,20 +20,20 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import TableSearch from '@/components/TableSearch'
 import TableColDropdown from '@/components/TableColDropdown'
-import { Customer } from '@/typings/customer'
+import { CustomerWithCustomMetrics } from '@/typings/customer'
 import CustomersTableCols from './CustomersTableCols'
 import useLocalStorageState from '@/hooks/useLocalStorageState'
 import { Tab } from '@/typings/tabs'
-import { Button } from '@/components/ui/button'
+import { Button } from '../ui/button'
 
-type CustomersTableProps = {
-  customers: Customer[]
-}
-
-const CustomersTable = ({ customers }: CustomersTableProps) => {
+const CustomersTable = ({
+  customers,
+}: {
+  customers: CustomerWithCustomMetrics[]
+}) => {
   const { push } = useRouter()
 
   const [tabs, setTabs] = useLocalStorageState<Tab[]>('tabs', {
@@ -60,11 +60,38 @@ const CustomersTable = ({ customers }: CustomersTableProps) => {
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     state: { sorting, columnFilters, columnVisibility, rowSelection },
+    initialState: {
+      pagination: {
+        pageSize: 50, // or any number that fits (currently set to 50)
+      },
+    },
   })
 
+  // -----------------------------------------------------------------------------------------
+  // for managing the sticky header and freeze the first column row logic
+
+  const tableRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const tableElement = tableRef.current
+    if (tableElement) {
+      const headerElement = tableElement.querySelector('thead')
+      if (headerElement) {
+        headerElement.style.transform = `translateY(${tableElement.scrollTop}px)`
+
+        const handleScroll = () => {
+          headerElement.style.transform = `translateY(${tableElement.scrollTop}px)`
+        }
+
+        tableElement.addEventListener('scroll', handleScroll)
+        return () => tableElement.removeEventListener('scroll', handleScroll)
+      }
+    }
+  }, [])
+
   return (
-    <>
-      <div className="items-center justify-between bg-background px-4 pb-4 sm:flex">
+    <div className="flex h-full flex-col p-5">
+      <div className="mb-4 flex-shrink-0 items-center justify-between bg-background sm:flex">
         <TableSearch
           columnId="name"
           table={table}
@@ -76,100 +103,128 @@ const CustomersTable = ({ customers }: CustomersTableProps) => {
         </div>
       </div>
 
-      <Table className=" min-w-max">
-        <TableHeader>
-          {table.getHeaderGroups().map(({ id: headerGroupId, headers }) => (
-            <TableRow key={headerGroupId}>
-              {headers.map(({ id: headerId, column, getContext }) => (
-                <TableHead
-                  key={headerId}
-                  className="group text-sm"
-                  style={{ width: `${column.columnDef.size}px` }}
-                >
-                  {flexRender(column.columnDef.header, getContext())}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table
-              .getRowModel()
-              .rows.map(
-                ({ id: rowId, getIsSelected, getVisibleCells, original }) => (
-                  <TableRow
-                    className="cursor-pointer"
-                    key={rowId}
-                    data-state={getIsSelected() && 'selected'}
-                    onClick={() => {
-                      const tabExists = tabs?.find(
-                        ({ key }) => key === original.name,
+      <div className="flex flex-grow flex-col overflow-hidden">
+        <div className="flex-grow overflow-x-auto scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-400">
+          <div className="inline-block min-w-full align-middle">
+            <div className="overflow-hidden">
+              <Table>
+                <TableHeader className="sticky top-0 z-10 bg-white">
+                  {table
+                    .getHeaderGroups()
+                    .map(({ id: headerGroupId, headers }) => (
+                      <TableRow key={headerGroupId}>
+                        {headers.map(({ id: headerId, column, getContext }) => (
+                          <TableHead
+                            key={headerId}
+                            className="whitespace-nowrap"
+                            style={{
+                              fontWeight: 'bold',
+                              width: `${column.getSize()}px`,
+                              minWidth: `${column.columnDef.minSize}px`,
+                            }}
+                          >
+                            {flexRender(column.columnDef.header, getContext())}
+                          </TableHead>
+                        ))}
+                      </TableRow>
+                    ))}
+                </TableHeader>
+                <TableBody>
+                  {table.getRowModel().rows?.length ? (
+                    table
+                      .getRowModel()
+                      .rows.map(
+                        ({
+                          id: rowId,
+                          getIsSelected,
+                          getVisibleCells,
+                          original,
+                        }) => (
+                          <TableRow
+                            className="cursor-pointer"
+                            key={rowId}
+                            data-state={getIsSelected() && 'selected'}
+                            onClick={() => {
+                              const tabExists = tabs?.find(
+                                ({ key }) => key === original.name,
+                              )
+
+                              if (!tabExists) {
+                                setTabs((prevTabs) => {
+                                  if (
+                                    prevTabs?.find(({ key }) => key === rowId)
+                                  ) {
+                                    return prevTabs
+                                  }
+
+                                  return [
+                                    ...(prevTabs ?? []),
+                                    {
+                                      key: original?.name ?? '',
+                                      route: `/${rowId}`,
+                                    },
+                                  ]
+                                })
+                              }
+
+                              push(`/${rowId}`)
+                            }}
+                          >
+                            {getVisibleCells().map(
+                              ({ id: cellId, column, getContext }) => (
+                                <TableCell
+                                  key={cellId}
+                                  style={{
+                                    width: `${column.columnDef.size}px`,
+                                    maxWidth: `${column.columnDef.maxSize}px`,
+                                  }}
+                                >
+                                  {flexRender(
+                                    column.columnDef.cell,
+                                    getContext(),
+                                  )}
+                                </TableCell>
+                              ),
+                            )}
+                          </TableRow>
+                        ),
                       )
+                  ) : (
+                    <TableRow>
+                      <TableCell
+                        colSpan={CustomersTableCols.length}
+                        className="h-24 text-center"
+                      >
+                        No invoices found
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
 
-                      if (!tabExists) {
-                        setTabs((prevTabs) => {
-                          if (prevTabs?.find(({ key }) => key === rowId)) {
-                            return prevTabs
-                          }
-
-                          return [
-                            ...(prevTabs ?? []),
-                            { key: original?.name ?? '', route: `/${rowId}` },
-                          ]
-                        })
-                      }
-
-                      push(`/${rowId}`)
-                    }}
-                  >
-                    {getVisibleCells().map(
-                      ({ id: cellId, column, getContext }) => (
-                        <TableCell
-                          key={cellId}
-                          style={{
-                            width: `${column.columnDef.size}px`,
-                            maxWidth: `${column.columnDef.maxSize}px`,
-                          }}
-                        >
-                          {flexRender(column.columnDef.cell, getContext())}
-                        </TableCell>
-                      ),
-                    )}
-                  </TableRow>
-                ),
-              )
-          ) : (
-            <TableRow>
-              <TableCell
-                colSpan={CustomersTableCols.length}
-                className="h-24 text-center"
+            <div className="flex items-center justify-end space-x-2 p-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
               >
-                No invoices found
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-      <div className="flex items-center justify-end space-x-2 p-4 ">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
-    </>
+    </div>
   )
 }
 
