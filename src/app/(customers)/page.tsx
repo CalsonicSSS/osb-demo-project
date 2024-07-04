@@ -4,7 +4,12 @@ import { getAllCustomers } from '@/supabase/api'
 const CustomersPage = async () => {
   const customers = await getAllCustomers()
 
-  return <CustomersTable customers={customers ?? []} />
+  return (
+    <div>
+      <div className="my-4 h-96 bg-muted">stuff goes here</div>
+      <CustomersTable customers={customers ?? []} />
+    </div>
+  )
 }
 
 export default CustomersPage

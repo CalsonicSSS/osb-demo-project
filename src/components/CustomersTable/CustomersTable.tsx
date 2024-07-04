@@ -34,9 +34,7 @@ type CustomersTableProps = {
 const CustomersTable = ({ customers }: CustomersTableProps) => {
   const { push } = useRouter()
 
-  const [_, setTabs] = useLocalStorageState<Tab[]>('tabs', {
-    defaultValue: [{ key: 'All Customers', route: '/' }],
-  })
+  const [_, setTabs] = useLocalStorageState<Tab[]>('tabs', { defaultValue: [] })
 
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -73,7 +71,7 @@ const CustomersTable = ({ customers }: CustomersTableProps) => {
         </div>
       </div>
 
-      <Table className="w-full min-w-max">
+      <Table className=" min-w-max">
         <TableHeader>
           {table.getHeaderGroups().map(({ id: headerGroupId, headers }) => (
             <TableRow key={headerGroupId}>

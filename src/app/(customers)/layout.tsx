@@ -1,12 +1,10 @@
 'use client'
 
-import ThemeToggle from '@/components/ThemeToggle'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import useLocalStorageState from '@/hooks/useLocalStorageState'
 import { Tab } from '@/typings/tabs'
 import Link from 'next/link'
 import { Cross1Icon } from '@radix-ui/react-icons'
-
 import { usePathname, useRouter } from 'next/navigation'
 
 const CustomersLayout = ({ children }: { children: React.ReactNode }) => {
@@ -21,51 +19,46 @@ const CustomersLayout = ({ children }: { children: React.ReactNode }) => {
   const isRouteCurrentTab = (route: string) => pathname === route
 
   return (
-    <div className="flex w-full flex-1 flex-col items-center gap-20">
-      <nav className="flex h-16 w-full justify-center border-b border-b-foreground/10">
-        <div className="flex w-full max-w-4xl items-center justify-between p-3 text-sm"></div>
+    <div className="flex w-full flex-1 flex-col items-center">
+      <nav className="flex w-full justify-center border-b border-b-foreground/10">
+        <Tabs
+          defaultValue="All Customers"
+          className="w-full"
+          value={
+            tabs?.find(({ route }) => isRouteCurrentTab(route))?.key ??
+            'All Customers'
+          }
+        >
+          <TabsList>
+            <TabsTrigger
+              value="All Customers"
+              className="flex justify-between gap-2"
+            >
+              <Link href="/">All Customers</Link>
+            </TabsTrigger>
+
+            {tabs?.map(({ key, route }) => (
+              <TabsTrigger
+                key={key}
+                value={key}
+                className="flex justify-between gap-2"
+              >
+                <Link href={route}>{key}</Link>
+                <Cross1Icon
+                  onClick={() => {
+                    removeTab(key)
+                    if (isRouteCurrentTab(route)) {
+                      push('/')
+                    }
+                  }}
+                />
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
       </nav>
 
-      <div className="flex max-w-4xl flex-1 flex-col gap-20 px-3">
-        <main className="flex flex-1 flex-col gap-6">
-          <Tabs
-            defaultValue="All Customers"
-            className="w-full"
-            value={
-              tabs?.find(({ route }) => isRouteCurrentTab(route))?.key ??
-              'All Customers'
-            }
-          >
-            <TabsList>
-              {tabs?.map(({ key, route }) => (
-                <TabsTrigger
-                  key={key}
-                  value={key}
-                  className="flex justify-between gap-2"
-                >
-                  <Link href={route}>{key}</Link>
-
-                  {key !== 'All Customers' && (
-                    <Cross1Icon
-                      onClick={() => {
-                        removeTab(key)
-                        if (isRouteCurrentTab(route)) {
-                          push('/')
-                        }
-                      }}
-                    />
-                  )}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-          {children}
-        </main>
-      </div>
-
-      <footer className="w-full justify-center border-t border-t-foreground/10 p-8 text-center text-xs">
-        <ThemeToggle />
-      </footer>
+      <div className="max-w-4xl">{children}</div>
     </div>
   )
 }
