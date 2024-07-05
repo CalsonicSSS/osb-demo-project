@@ -58,7 +58,7 @@ const InventoryTable = ({ invoices, companyName }: InventoryTableProps) => {
 
   return (
     <>
-      <div className="mb-4 items-center justify-between bg-background px-4 sm:flex">
+      <div className="mb-4 items-center justify-between bg-background pr-4 sm:flex">
         <TableSearch
           columnId="invoice_bal1"
           table={table}

@@ -142,10 +142,10 @@ export type Database = {
           customer_po_number: string | null
           document_type: string
           id: string
-          invoice_bal1: number | null
-          invoice_bal1_1: number | null
+          invoice_bal1: number
+          invoice_bal2: number
           invoice_bal3: string | null
-          invoice_date: string | null
+          invoice_date: string
           org_disc_value: string | null
           post_currency: string | null
           salesperson: number | null
@@ -159,10 +159,10 @@ export type Database = {
           customer_po_number?: string | null
           document_type?: string
           id: string
-          invoice_bal1?: number | null
-          invoice_bal1_1?: number | null
+          invoice_bal1: number
+          invoice_bal2: number
           invoice_bal3?: string | null
-          invoice_date?: string | null
+          invoice_date: string
           org_disc_value?: string | null
           post_currency?: string | null
           salesperson?: number | null
@@ -176,10 +176,10 @@ export type Database = {
           customer_po_number?: string | null
           document_type?: string
           id?: string
-          invoice_bal1?: number | null
-          invoice_bal1_1?: number | null
+          invoice_bal1?: number
+          invoice_bal2?: number
           invoice_bal3?: string | null
-          invoice_date?: string | null
+          invoice_date?: string
           org_disc_value?: string | null
           post_currency?: string | null
           salesperson?: number | null

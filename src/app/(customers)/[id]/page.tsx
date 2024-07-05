@@ -12,7 +12,10 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import InventoryTable from '@/components/InventoryTable/InventoryTable'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Invoice, InvoicePay, InvoiceRef } from '@/typings/invoicing'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import CustomerCharts from '@/components/CustomerCharts'
 
 const CustomerPage = async ({ params }: { params: { id: string } }) => {
   const { id } = params
@@ -26,6 +29,19 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
 
   if (!customer) redirect('/404')
 
+  const { name } = customer
+
+  const totalAmountDue =
+    invoices?.reduce((acc, curr) => acc + curr.invoice_bal1, 0) ?? 0
+
+  const invoiceOutstanding =
+    invoices?.reduce((acc, curr) => {
+      if (curr.invoice_bal1 > 0) {
+        return acc + curr.invoice_bal1
+      }
+      return acc
+    }, 0) ?? 0
+
   const formattedInvoices = formatDataForTable(
     invoices ?? [],
     invoicesPay ?? [],
@@ -33,27 +49,20 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
   )
 
   return (
-    <div className="flex h-full w-full">
-      <div className="h-full w-96 bg-muted p-4">
-        <h1 className="pb-5">stuff goes here</h1>
-      </div>
-      <div className="h-full w-full p-4">
-        <div className="flex gap-4">
-          <div className="h-44 w-full rounded-md bg-muted">card</div>
-          <div className="h-44 w-full rounded-md bg-muted">card</div>
-          <div className="h-44 w-full rounded-md bg-muted">card</div>
-          <div className="h-44 w-full rounded-md bg-muted">card</div>
+    <div className="flex h-full w-full gap-6">
+      <div className="h-full w-96">
+        <div className="mb-3 flex flex-col items-center gap-3 rounded-sm border py-4">
+          <Avatar>
+            <AvatarFallback className="bg-primary text-primary-foreground">
+              {name?.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <h1 className="text-2xl font-semibold">{name}</h1>
         </div>
-
-        <Accordion type="single" collapsible>
+        <Accordion type="single" collapsible defaultValue="item-1">
           <AccordionItem value="item-1">
-            <AccordionTrigger>Invoices</AccordionTrigger>
-            <AccordionContent>
-              <InventoryTable
-                invoices={formattedInvoices ?? []}
-                companyName={customer.name ?? ''}
-              />
-            </AccordionContent>
+            <AccordionTrigger>Contact</AccordionTrigger>
+            <AccordionContent>Mock stuff</AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2">
             <AccordionTrigger>Orders</AccordionTrigger>
@@ -64,6 +73,30 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
             <AccordionContent>Mock stuff</AccordionContent>
           </AccordionItem>
         </Accordion>
+      </div>
+      <div className="h-full w-full ">
+        <CustomerCharts
+          customer={customer}
+          salesOrders={invoiceRefs?.length ?? 0}
+          totalAmountDue={totalAmountDue ?? 0}
+          invoiceOutstanding={invoiceOutstanding ?? 0}
+        />
+        <Tabs defaultValue="Invoices" className="mb-4 ">
+          <TabsList className="w-full justify-start">
+            <TabsTrigger value="Invoices">Invoices</TabsTrigger>
+            <TabsTrigger value="Orders">Orders</TabsTrigger>
+            <TabsTrigger value="Other">Other</TabsTrigger>
+          </TabsList>
+          <TabsContent value="Invoices" className="pt-4">
+            <InventoryTable
+              invoices={formattedInvoices ?? []}
+              companyName={customer.name ?? ''}
+            />
+          </TabsContent>
+          <TabsContent value="Orders" className="pt-4">
+            Change your password here.
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   )
@@ -83,16 +116,14 @@ const formatDataForTable = (
 ) => {
   return invoices.map((invoice) => {
     const invoicePays = invoicesPay
-      .filter((invoicePay) => invoicePay.id === invoice.id)
+      .filter(({ id }) => id === invoice.id)
       .reduce((acc, curr) => acc + curr.trn_value, 0)
 
     const salesOrderId =
-      invoiceRefs?.find((invoiceRef) => invoiceRef.id === invoice.id)
-        ?.sales_order_id ?? ''
+      invoiceRefs?.find(({ id }) => id === invoice.id)?.sales_order_id ?? ''
 
     const documentType =
-      invoiceRefs?.find((invoiceRef) => invoiceRef.id === invoice.id)
-        ?.document_type ?? ''
+      invoiceRefs?.find(({ id }) => id === invoice.id)?.document_type ?? ''
 
     const stockDesc =
       invoice?.products

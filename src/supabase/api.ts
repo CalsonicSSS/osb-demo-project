@@ -1,7 +1,7 @@
 import { createServerClient } from '@/utils/supabase'
 import { cookies } from 'next/headers'
 
-export async function getAllCustomers() {
+export const getAllCustomers = async () => {
   const cookieStore = cookies()
   const supabaseClient = createServerClient(cookieStore)
   try {
@@ -14,7 +14,7 @@ export async function getAllCustomers() {
   }
 }
 
-export async function getCustomerById(id: string) {
+export const getCustomerById = async (id: string) => {
   const cookieStore = cookies()
   const supabaseClient = createServerClient(cookieStore)
   try {
@@ -35,7 +35,7 @@ export const getCustomerInvoices = async (id: string) => {
   try {
     const { data: invoices } = await supabase
       .from('ar_invoice')
-      .select('id, invoice_bal1, currency_value')
+      .select('id, invoice_bal1, currency_value, invoice_date')
       .eq('customer_id', id)
     return invoices
   } catch (error) {
@@ -92,10 +92,7 @@ export const getCustomerInvoicesWithProducts = async (userId: string) => {
     invoiceIds?.map((id) => getInvoiceProducts(id)),
   )
   return invoices?.map((invoice, index) => {
-    return {
-      ...invoice,
-      products: products[index],
-    }
+    return { ...invoice, products: products[index] }
   })
 }
 

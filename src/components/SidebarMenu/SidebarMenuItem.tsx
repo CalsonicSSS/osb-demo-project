@@ -23,9 +23,7 @@ const SidebarMenuItem = ({
   >
     {icon}
     {!isCollapsed && (
-      <span className="hidden whitespace-nowrap font-semibold md:inline">
-        {label}
-      </span>
+      <span className="hidden whitespace-nowrap md:inline">{label}</span>
     )}
   </Link>
 )

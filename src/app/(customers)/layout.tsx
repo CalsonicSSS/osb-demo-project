@@ -8,12 +8,13 @@ import { Cross1Icon } from '@radix-ui/react-icons'
 import { usePathname, useRouter } from 'next/navigation'
 import SidebarMenu from '@/components/SidebarMenu'
 import { useState } from 'react'
+import { cn } from '@/utils/tailwind'
 
 const CustomersLayout = ({ children }: { children: React.ReactNode }) => {
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
-
   const pathname = usePathname()
   const { push } = useRouter()
+
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
 
   const [tabs, setTabs] = useLocalStorageState<Tab[]>('tabs')
 
@@ -30,9 +31,10 @@ const CustomersLayout = ({ children }: { children: React.ReactNode }) => {
           setIsCollapsed={setIsSidebarCollapsed}
         />
         <main
-          className={`flex h-full flex-col overflow-hidden transition-all duration-300 ${
-            isSidebarCollapsed ? 'w-[calc(100%-4rem)]' : 'w-[calc(100%-16rem)]'
-          }`}
+          className={cn(
+            'flex h-full flex-col overflow-hidden transition-all duration-300 ',
+            isSidebarCollapsed ? 'w-[calc(100%-4rem)]' : 'w-[calc(100%-16rem)]',
+          )}
         >
           <nav className="flex w-full justify-center border-b border-b-foreground/10">
             <Tabs
@@ -71,7 +73,9 @@ const CustomersLayout = ({ children }: { children: React.ReactNode }) => {
               </TabsList>
             </Tabs>
           </nav>
-          <div className="flex-1 overflow-hidden p-6">{children}</div>
+          <div className={cn('flex-1 overflow-y-auto overflow-x-hidden p-6')}>
+            {children}
+          </div>
         </main>
       </div>
     </div>

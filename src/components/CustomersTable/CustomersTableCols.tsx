@@ -42,7 +42,9 @@ const CustomersTableCols: ColumnDef<CustomerWithCustomMetrics>[] = [
     header: 'Credit Limit',
     size: 200,
     cell: ({ row }) => (
-      <div className="whitespace-nowrap">{row.getValue('credit_limit')}</div>
+      <div className="whitespace-nowrap">
+        {formatCurrency(row.getValue('credit_limit'))}
+      </div>
     ),
   },
   {
