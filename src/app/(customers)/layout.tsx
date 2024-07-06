@@ -24,12 +24,17 @@ const CustomersLayout = ({ children }: { children: React.ReactNode }) => {
   const isRouteCurrentTab = (route: string) => pathname === route
 
   return (
+    // Customer routes layout
+    // layout flex box
     <div className="flex h-screen flex-col overflow-hidden bg-background">
       <div className="flex h-full flex-1 sm:h-full">
+        {/* ---------------------------------------------------------------------------------- */}
+        {/* sidebar menu sectoin */}
         <SidebarMenu
           isCollapsed={isSidebarCollapsed}
           setIsCollapsed={setIsSidebarCollapsed}
         />
+        {/* main content section */}
         <main
           className={cn(
             'flex h-full flex-col overflow-hidden transition-all duration-300 ',
@@ -73,7 +78,7 @@ const CustomersLayout = ({ children }: { children: React.ReactNode }) => {
               </TabsList>
             </Tabs>
           </nav>
-          <div className={cn('flex-1 overflow-hidden')}>{children}</div>
+          <div className="flex-1 overflow-hidden">{children}</div>
         </main>
       </div>
     </div>

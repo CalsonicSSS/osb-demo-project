@@ -27,7 +27,7 @@ import { CustomerWithCustomMetrics } from '@/typings/customer'
 import CustomersTableCols from './CustomersTableCols'
 import useLocalStorageState from '@/hooks/useLocalStorageState'
 import { Tab } from '@/typings/tabs'
-import { Button } from '../ui/button'
+import { Button } from '@/components/ui/button'
 
 const CustomersTable = ({
   customers,
@@ -83,7 +83,7 @@ const CustomersTable = ({
   }, [])
 
   return (
-    <div className="flex h-full flex-col p-5">
+    <div className="flex h-full flex-col pb-2 pl-5 pr-5 pt-5">
       <div className="mb-4 flex-shrink-0 items-center justify-between bg-background sm:flex">
         <TableSearch
           columnId="name"
@@ -97,7 +97,10 @@ const CustomersTable = ({
       </div>
 
       <div className="flex flex-grow flex-col overflow-hidden">
-        <div className="flex-grow overflow-x-auto scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-400">
+        <div
+          className="flex-grow overflow-x-auto scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-400"
+          ref={tableRef}
+        >
           <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden">
               <Table>
@@ -109,9 +112,8 @@ const CustomersTable = ({
                         {headers.map(({ id: headerId, column, getContext }) => (
                           <TableHead
                             key={headerId}
-                            className="whitespace-nowrap"
+                            className="whitespace-nowrap font-bold"
                             style={{
-                              fontWeight: 'bold',
                               width: `${column.getSize()}px`,
                               minWidth: `${column.columnDef.minSize}px`,
                             }}

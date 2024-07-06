@@ -11,15 +11,15 @@ import {
   ChevronRightIcon,
 } from '@radix-ui/react-icons'
 import SidebarMenuItem from './SidebarMenuItem'
+import Link from 'next/link'
 import { cn } from '@/utils/tailwind'
 
-export default function SidebarMenu({
-  isCollapsed,
-  setIsCollapsed,
-}: {
+type SidebarMenuProps = {
   isCollapsed: boolean
   setIsCollapsed: Dispatch<SetStateAction<boolean>>
-}) {
+}
+
+const SidebarMenu = ({ isCollapsed, setIsCollapsed }: SidebarMenuProps) => {
   const toggleSidebar = () => setIsCollapsed(!isCollapsed)
 
   return (
@@ -30,12 +30,15 @@ export default function SidebarMenu({
       )}
     >
       <div className="my-5 flex items-center justify-center">
-        <Image
-          src="/logo.png"
-          alt="OS&B Logo"
-          width={isCollapsed ? 50 : 100}
-          height={isCollapsed ? 50 : 100}
-        />
+        <Link href={'/'}>
+          {' '}
+          <Image
+            src="/logo.png"
+            alt="OS&B Logo"
+            width={isCollapsed ? 50 : 100}
+            height={isCollapsed ? 50 : 100}
+          />
+        </Link>
       </div>
       <nav className="flex flex-1 flex-col space-y-4 px-4">
         {SIDEBAR_ITEMS.map(({ icon, href, label }) => (
@@ -76,3 +79,5 @@ const SIDEBAR_ITEMS = [
   { icon: <ArchiveIcon />, href: '#', label: 'Products' },
   { icon: <ChatBubbleIcon />, href: '#', label: 'Inbox' },
 ]
+
+export default SidebarMenu

@@ -19,7 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import TableSearch from '@/components/TableSearch'
 import InventoryTableCols from './InventoryTableCols'
 import { Button } from '@/components/ui/button'
@@ -54,7 +54,9 @@ const InventoryTable = ({ invoices, companyName }: InventoryTableProps) => {
     state: { sorting, columnFilters, columnVisibility, rowSelection },
   })
 
-  const hasSelection = Object.keys(rowSelection).length > 0
+  const selectedInvoices = Object.keys(rowSelection)
+    .map((id) => invoices.find((invoice) => invoice.id === id))
+    .filter((invoice): invoice is InvoiceTableRow => invoice !== undefined)
 
   return (
     <>
@@ -66,57 +68,78 @@ const InventoryTable = ({ invoices, companyName }: InventoryTableProps) => {
           className="sm:max-w-sm"
         />
         <div className="mt-3 flex justify-end gap-2 sm:mt-0 sm:justify-normal">
-          {hasSelection && <GenerateEmailDialog companyName={companyName} />}
+          {selectedInvoices.length > 0 && (
+            <GenerateEmailDialog
+              selectedInvoices={selectedInvoices}
+              companyName={companyName}
+            />
+          )}
         </div>
       </div>
 
-      <Table className=" min-w-max">
-        <TableHeader>
-          {table.getHeaderGroups().map(({ id: headerGroupId, headers }) => (
-            <TableRow key={headerGroupId}>
-              {headers.map(({ id: headerId, column, getContext }) => (
-                <TableHead
-                  key={headerId}
-                  className="group text-sm"
-                  style={{ width: `${column.columnDef.size}px` }}
-                >
-                  {flexRender(column.columnDef.header, getContext())}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table
-              .getRowModel()
-              .rows.map(({ id: rowId, getIsSelected, getVisibleCells }) => (
-                <TableRow
-                  key={rowId}
-                  data-state={getIsSelected() && 'selected'}
-                >
-                  {getVisibleCells().map(
-                    ({ id: cellId, column, getContext }) => (
-                      <TableCell key={cellId}>
-                        {flexRender(column.columnDef.cell, getContext())}
-                      </TableCell>
-                    ),
-                  )}
+      <div className="flex-grow overflow-hidden">
+        <div className="h-full overflow-auto scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-400">
+          <Table className="w-full">
+            <TableHeader className="sticky top-0 z-10 bg-white">
+              {table.getHeaderGroups().map(({ id: headerGroupId, headers }) => (
+                <TableRow key={headerGroupId}>
+                  {headers.map(({ id: headerId, column, getContext }) => (
+                    <TableHead
+                      key={headerId}
+                      className="whitespace-nowrap font-bold"
+                      style={{
+                        width: `${column.getSize()}px`,
+                        minWidth: `${column.columnDef.minSize ?? 0}px`,
+                      }}
+                    >
+                      {flexRender(column.columnDef.header, getContext())}
+                    </TableHead>
+                  ))}
                 </TableRow>
-              ))
-          ) : (
-            <TableRow>
-              <TableCell
-                colSpan={InventoryTableCols.length}
-                className="h-24 text-center"
-              >
-                No customers found
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-      <div className="flex items-center justify-end space-x-2 p-4 ">
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table
+                  .getRowModel()
+                  .rows.map(({ id: rowId, getIsSelected, getVisibleCells }) => (
+                    <TableRow
+                      key={rowId}
+                      data-state={getIsSelected() && 'selected'}
+                    >
+                      {getVisibleCells().map(
+                        ({ id: cellId, column, getContext }) => (
+                          <TableCell
+                            key={cellId}
+                            style={{
+                              width: `${column.getSize()}px`,
+                              maxWidth: `${
+                                column.columnDef.maxSize ?? 'auto'
+                              }px`,
+                            }}
+                          >
+                            {flexRender(column.columnDef.cell, getContext())}
+                          </TableCell>
+                        ),
+                      )}
+                    </TableRow>
+                  ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={InventoryTableCols.length}
+                    className="h-24 text-center"
+                  >
+                    No invoices found
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+
+      <div className="flex-end flex justify-end space-x-2 border-t bg-white pt-2">
         <Button
           variant="outline"
           size="sm"
