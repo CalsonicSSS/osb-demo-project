@@ -73,9 +73,7 @@ const CustomersLayout = ({ children }: { children: React.ReactNode }) => {
               </TabsList>
             </Tabs>
           </nav>
-          <div className={cn('flex-1 overflow-y-auto overflow-x-hidden p-6')}>
-            {children}
-          </div>
+          <div className={cn('flex-1 overflow-hidden')}>{children}</div>
         </main>
       </div>
     </div>

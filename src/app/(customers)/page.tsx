@@ -5,7 +5,7 @@ const CustomersPage = async () => {
   const customers = await getAllCustomersWithCustomMetrics()
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col p-6">
       <div className="mb-5 flex h-1/3 min-h-[350px]">
         <div className="mr-2 flex-1 rounded-sm bg-gray-100 p-4">
           Analytics Placeholder 1

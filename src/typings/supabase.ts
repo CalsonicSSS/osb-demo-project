@@ -364,15 +364,15 @@ export type Database = {
           id: string
           invoice_id: string
           line_ship_date: string | null
-          order_qty: number | null
-          price: number | null
+          order_qty: number
+          price: number
           sales_order_line: number
-          ship_qty: number | null
+          ship_qty: number
           stock_code: string | null
-          stock_description: string | null
+          stock_description: string
           stock_qty_to_ship: number | null
           tax_code: string | null
-          unit_cost: string | null
+          unit_cost: number
         }
         Insert: {
           back_order_qty: number
@@ -380,15 +380,15 @@ export type Database = {
           id: string
           invoice_id: string
           line_ship_date?: string | null
-          order_qty?: number | null
-          price?: number | null
+          order_qty: number
+          price: number
           sales_order_line: number
-          ship_qty?: number | null
+          ship_qty: number
           stock_code?: string | null
-          stock_description?: string | null
+          stock_description?: string
           stock_qty_to_ship?: number | null
           tax_code?: string | null
-          unit_cost?: string | null
+          unit_cost: number
         }
         Update: {
           back_order_qty?: number
@@ -396,15 +396,15 @@ export type Database = {
           id?: string
           invoice_id?: string
           line_ship_date?: string | null
-          order_qty?: number | null
-          price?: number | null
+          order_qty?: number
+          price?: number
           sales_order_line?: number
-          ship_qty?: number | null
+          ship_qty?: number
           stock_code?: string | null
-          stock_description?: string | null
+          stock_description?: string
           stock_qty_to_ship?: number | null
           tax_code?: string | null
-          unit_cost?: string | null
+          unit_cost?: number
         }
         Relationships: []
       }

@@ -77,7 +77,7 @@ export const getInvoiceProducts = async (id: string) => {
   try {
     const { data: products } = await supabase
       .from('sor_detail_rep')
-      .select('stock_description')
+      .select('stock_description, price, order_qty, unit_cost')
       .eq('invoice_id', id)
     return products
   } catch (error) {

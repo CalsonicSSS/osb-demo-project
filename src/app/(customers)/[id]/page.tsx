@@ -31,6 +31,8 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
 
   const { name } = customer
 
+  const invoiceCount = invoices?.length ?? 0
+
   const totalAmountDue =
     invoices?.reduce((acc, curr) => acc + curr.invoice_bal1, 0) ?? 0
 
@@ -42,6 +44,44 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
       return acc
     }, 0) ?? 0
 
+  const avgInvoiceValue = invoiceCount > 0 ? totalAmountDue / invoiceCount : 0
+
+  const { totalUnitPriceSum, totalCountOfProducts, totalUnitPriceCost } =
+    invoices?.reduce(
+      (acc, curr) => {
+        const products = curr?.products ?? []
+        const productUnitPriceSum = products.reduce((acc, product) => {
+          return acc + (product?.price ?? 0)
+        }, 0)
+
+        const totalCost = products.reduce((acc, product) => {
+          return acc + product?.unit_cost
+        }, 0)
+
+        return {
+          totalUnitPriceSum: acc.totalUnitPriceSum + productUnitPriceSum,
+          totalCountOfProducts: acc.totalCountOfProducts + products.length,
+          totalUnitPriceCost: acc.totalUnitPriceCost + totalCost,
+        }
+      },
+      { totalUnitPriceSum: 0, totalCountOfProducts: 0, totalUnitPriceCost: 0 },
+    ) ?? {
+      totalUnitPriceSum: 0,
+      totalCountOfProducts: 0,
+      totalUnitPriceCost: 0,
+    }
+
+  const avgUnitPrice =
+    totalCountOfProducts > 0 ? totalUnitPriceSum / totalCountOfProducts : 0
+
+  const avgUnitCost = totalUnitPriceCost / totalCountOfProducts || 0
+
+  const avgOrderQty =
+    totalCountOfProducts > 0 ? totalCountOfProducts / invoiceCount : 0
+
+  const avgProfitMargin =
+    ((avgUnitPrice - avgUnitCost) / avgUnitPrice) * 100 || 100
+
   const formattedInvoices = formatDataForTable(
     invoices ?? [],
     invoicesPay ?? [],
@@ -49,8 +89,8 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
   )
 
   return (
-    <div className="flex h-full w-full gap-6">
-      <div className="h-full w-96">
+    <div className="flex h-full w-full">
+      <div className="h-full w-96 p-6 pr-3">
         <div className="mb-3 flex flex-col items-center gap-3 rounded-sm border py-4">
           <Avatar>
             <AvatarFallback className="bg-primary text-primary-foreground">
@@ -59,7 +99,7 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
           </Avatar>
           <h1 className="text-2xl font-semibold">{name}</h1>
         </div>
-        <Accordion type="single" collapsible defaultValue="item-1">
+        <Accordion type="single" collapsible>
           <AccordionItem value="item-1">
             <AccordionTrigger>Contact</AccordionTrigger>
             <AccordionContent>Mock stuff</AccordionContent>
@@ -74,12 +114,16 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
           </AccordionItem>
         </Accordion>
       </div>
-      <div className="h-full w-full ">
+      <div className="h-full w-full overflow-auto p-6 pl-3">
         <CustomerCharts
           customer={customer}
           salesOrders={invoiceRefs?.length ?? 0}
-          totalAmountDue={totalAmountDue ?? 0}
-          invoiceOutstanding={invoiceOutstanding ?? 0}
+          totalAmountDue={totalAmountDue}
+          invoiceOutstanding={invoiceOutstanding}
+          avgInvoiceValue={avgInvoiceValue}
+          avgUnitPrice={avgUnitPrice}
+          avgOrderQty={avgOrderQty}
+          avgProfitMargin={avgProfitMargin}
         />
         <Tabs defaultValue="Invoices" className="mb-4 ">
           <TabsList className="w-full justify-start">
@@ -113,8 +157,8 @@ const formatDataForTable = (
   invoices: InvoiceWithProducts[],
   invoicesPay: Pick<InvoicePay, 'id' | 'trn_value'>[],
   invoiceRefs: Pick<InvoiceRef, 'id' | 'sales_order_id' | 'document_type'>[],
-) => {
-  return invoices.map((invoice) => {
+) =>
+  invoices.map((invoice) => {
     const invoicePays = invoicesPay
       .filter(({ id }) => id === invoice.id)
       .reduce((acc, curr) => acc + curr.trn_value, 0)
@@ -140,6 +184,5 @@ const formatDataForTable = (
       stock_description: stockDesc,
     }
   })
-}
 
 export default CustomerPage
