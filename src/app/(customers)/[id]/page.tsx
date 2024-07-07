@@ -101,15 +101,15 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
         </div>
         <Accordion type="single" collapsible>
           <AccordionItem value="item-1">
-            <AccordionTrigger>Contact</AccordionTrigger>
+            <AccordionTrigger>Contact Info</AccordionTrigger>
             <AccordionContent>Mock stuff</AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2">
-            <AccordionTrigger>Orders</AccordionTrigger>
+            <AccordionTrigger>Payment Info</AccordionTrigger>
             <AccordionContent>Mock stuff</AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-3">
-            <AccordionTrigger>Other</AccordionTrigger>
+            <AccordionTrigger>Shipping Locations</AccordionTrigger>
             <AccordionContent>Mock stuff</AccordionContent>
           </AccordionItem>
         </Accordion>
@@ -127,9 +127,9 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
         />
         <Tabs defaultValue="Invoices" className="mb-4 ">
           <TabsList className="w-full justify-start">
-            <TabsTrigger value="Invoices">Invoices</TabsTrigger>
+            <TabsTrigger value="Invoices and Credits">Invoices</TabsTrigger>
             <TabsTrigger value="Orders">Orders</TabsTrigger>
-            <TabsTrigger value="Other">Other</TabsTrigger>
+            <TabsTrigger value="Price Lists">Other</TabsTrigger>
           </TabsList>
           <TabsContent value="Invoices" className="pt-4">
             <InventoryTable

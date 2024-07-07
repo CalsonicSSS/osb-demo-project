@@ -4,6 +4,7 @@ import NextTopLoader from 'nextjs-toploader'
 import './globals.css'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import ReactQueryProvider from '@/providers/ReactQueryProvider'
+import { Toaster } from '@/components/ui/sonner'
 
 export const metadata = {
   title: 'OS&B Admin Dashboard',
@@ -33,6 +34,7 @@ export default function RootLayout({
             <ReactQueryDevtools initialIsOpen={false} />
           </ReactQueryProvider>
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   )

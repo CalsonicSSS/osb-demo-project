@@ -3,11 +3,12 @@
 import { CustomerWithCustomMetrics } from '@/typings/customer'
 import { formatCurrency } from '@/utils/format'
 import { ColumnDef } from '@tanstack/react-table'
+import SortedTableHeader from '@/components/SortableTableHeader'
 
 const CustomersTableCols: ColumnDef<CustomerWithCustomMetrics>[] = [
   {
     accessorKey: 'name',
-    header: 'Name',
+    header: ({ column }) => <SortedTableHeader column={column} label="Name" />,
     size: 200,
     cell: ({ row }) => (
       <div className="whitespace-nowrap">{row.getValue('name')}</div>
@@ -15,7 +16,9 @@ const CustomersTableCols: ColumnDef<CustomerWithCustomMetrics>[] = [
   },
   {
     accessorKey: 'id',
-    header: 'Customer ID',
+    header: ({ column }) => (
+      <SortedTableHeader column={column} label="Customer ID" />
+    ),
     size: 200,
     cell: ({ row }) => (
       <div className="whitespace-nowrap">{row.getValue('id')}</div>
@@ -31,7 +34,9 @@ const CustomersTableCols: ColumnDef<CustomerWithCustomMetrics>[] = [
   },
   {
     accessorKey: 'date_last_sale',
-    header: 'Last Sale Date',
+    header: ({ column }) => (
+      <SortedTableHeader column={column} label="Last Sale Date" />
+    ),
     size: 200,
     cell: ({ row }) => (
       <div className="whitespace-nowrap">{row.getValue('date_last_sale')}</div>
@@ -39,7 +44,9 @@ const CustomersTableCols: ColumnDef<CustomerWithCustomMetrics>[] = [
   },
   {
     accessorKey: 'credit_limit',
-    header: 'Credit Limit',
+    header: ({ column }) => (
+      <SortedTableHeader column={column} label="Credit Limit" />
+    ),
     size: 200,
     cell: ({ row }) => (
       <div className="whitespace-nowrap">
@@ -49,7 +56,9 @@ const CustomersTableCols: ColumnDef<CustomerWithCustomMetrics>[] = [
   },
   {
     accessorKey: 'current_balance',
-    header: 'Current Balance',
+    header: ({ column }) => (
+      <SortedTableHeader column={column} label="Balance" />
+    ),
     size: 200,
     cell: ({ row }) => (
       <div className="whitespace-nowrap">
@@ -67,7 +76,9 @@ const CustomersTableCols: ColumnDef<CustomerWithCustomMetrics>[] = [
   },
   {
     accessorKey: 'invoice_count',
-    header: 'Invoice Count',
+    header: ({ column }) => (
+      <SortedTableHeader column={column} label="Invoices" />
+    ),
     size: 200,
     cell: ({ row }) => (
       <div className="whitespace-nowrap">{row.getValue('invoice_count')}</div>
@@ -75,7 +86,9 @@ const CustomersTableCols: ColumnDef<CustomerWithCustomMetrics>[] = [
   },
   {
     accessorKey: 'invoice_unpaid',
-    header: 'Invoice Unpaid',
+    header: ({ column }) => (
+      <SortedTableHeader column={column} label="Invoices Unpaid" />
+    ),
     size: 200,
     cell: ({ row }) => (
       <div className="whitespace-nowrap">{row.getValue('invoice_unpaid')}</div>
@@ -83,7 +96,9 @@ const CustomersTableCols: ColumnDef<CustomerWithCustomMetrics>[] = [
   },
   {
     accessorKey: 'sor_qty',
-    header: 'Sor Qty',
+    header: ({ column }) => (
+      <SortedTableHeader column={column} label="Sor Qty" />
+    ),
     size: 200,
     cell: ({ row }) => (
       <div className="whitespace-nowrap">{row.getValue('sor_qty')}</div>
@@ -91,7 +106,9 @@ const CustomersTableCols: ColumnDef<CustomerWithCustomMetrics>[] = [
   },
   {
     accessorKey: 'back_order_qty',
-    header: 'Back Orders Qty',
+    header: ({ column }) => (
+      <SortedTableHeader column={column} label="Back Order Qty" />
+    ),
     size: 200,
     cell: ({ row }) => (
       <div className="whitespace-nowrap">{row.getValue('back_order_qty')}</div>

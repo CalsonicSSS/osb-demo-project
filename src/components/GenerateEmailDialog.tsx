@@ -193,6 +193,9 @@ Format the output using Markdown for better readability, including proper headin
                 {completion}
               </ReactMarkdown>
             </div>
+            <Button variant="outline" className="w-full">
+              Send Email
+            </Button>
           </div>
         )}
       </DialogContent>

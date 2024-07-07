@@ -4,7 +4,8 @@ import { InvoiceTableRow } from '@/typings/invoicing'
 import { ColumnDef } from '@tanstack/react-table'
 import { formatCurrency } from '@/utils/format'
 import { Checkbox } from '@/components/ui/checkbox'
-import { ScrollArea } from '../ui/scroll-area'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import SortedTableHeader from '@/components/SortableTableHeader'
 
 const CustomersTableCols: ColumnDef<InvoiceTableRow>[] = [
   {
@@ -30,21 +31,27 @@ const CustomersTableCols: ColumnDef<InvoiceTableRow>[] = [
   },
   { header: 'Invoice No.', accessorKey: 'id' },
   {
-    header: 'Current Balance',
+    header: ({ column }) => (
+      <SortedTableHeader column={column} label="Current Balance" />
+    ),
     accessorKey: 'invoice_bal1',
     cell: ({ row }) => (
       <>{formatCurrency(parseFloat(row.getValue('invoice_bal1')))}</>
     ),
   },
   {
-    header: 'Invoice Amount',
+    header: ({ column }) => (
+      <SortedTableHeader column={column} label="Invoice Amount" />
+    ),
     accessorKey: 'currency_value',
     cell: ({ row }) => (
       <>{formatCurrency(parseFloat(row.getValue('currency_value')))}</>
     ),
   },
   {
-    header: 'Amount Paid',
+    header: ({ column }) => (
+      <SortedTableHeader column={column} label="Amount Paid" />
+    ),
     accessorKey: 'trn_value',
     cell: ({ row }) => (
       <>{formatCurrency(parseFloat(row.getValue('trn_value')))}</>
