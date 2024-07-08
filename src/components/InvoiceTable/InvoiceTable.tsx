@@ -21,17 +21,17 @@ import {
 } from '@/components/ui/table'
 import { useEffect, useRef, useState } from 'react'
 import TableSearch from '@/components/TableSearch'
-import InventoryTableCols from './InventoryTableCols'
+import InvoiceTableCols from './InvoiceTableCols'
 import { Button } from '@/components/ui/button'
 import { InvoiceTableRow } from '@/typings/invoicing'
 import GenerateEmailDialog from '../GenerateEmailDialog'
 
-type InventoryTableProps = {
+type InvoiceTableProps = {
   invoices: InvoiceTableRow[]
   companyName: string
 }
 
-const InventoryTable = ({ invoices, companyName }: InventoryTableProps) => {
+const InvoiceTable = ({ invoices, companyName }: InvoiceTableProps) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
@@ -44,7 +44,7 @@ const InventoryTable = ({ invoices, companyName }: InventoryTableProps) => {
     onSortingChange: setSorting,
     getRowId: (row) => row.id,
     onColumnFiltersChange: setColumnFilters,
-    columns: InventoryTableCols,
+    columns: InvoiceTableCols,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -127,7 +127,7 @@ const InventoryTable = ({ invoices, companyName }: InventoryTableProps) => {
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={InventoryTableCols.length}
+                    colSpan={InvoiceTableCols.length}
                     className="h-24 text-center"
                   >
                     No invoices found
@@ -161,4 +161,4 @@ const InventoryTable = ({ invoices, companyName }: InventoryTableProps) => {
   )
 }
 
-export default InventoryTable
+export default InvoiceTable

@@ -11,7 +11,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import InventoryTable from '@/components/InventoryTable/InventoryTable'
+import InvoiceTable from '@/components/InvoiceTable/InvoiceTable'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Invoice, InvoicePay, InvoiceRef } from '@/typings/invoicing'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -36,15 +36,13 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
   const totalAmountDue =
     invoices?.reduce((acc, curr) => acc + curr.invoice_bal1, 0) ?? 0
 
-  const invoiceOutstanding =
-    invoices?.reduce((acc, curr) => {
-      if (curr.invoice_bal1 > 0) {
-        return acc + curr.invoice_bal1
-      }
-      return acc
-    }, 0) ?? 0
+  const totalInvoiceValue =
+    invoices?.reduce((acc, curr) => acc + (curr?.currency_value ?? 0), 0) ?? 0
 
-  const avgInvoiceValue = invoiceCount > 0 ? totalAmountDue / invoiceCount : 0
+  const invoicesOutstandingCount =
+    invoices?.filter((invoice) => invoice.invoice_bal1 > 0).length ?? 0
+
+  const avgInvoiceValue = totalInvoiceValue / invoiceCount || 0
 
   const { totalUnitPriceSum, totalCountOfProducts, totalUnitPriceCost } =
     invoices?.reduce(
@@ -117,22 +115,22 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
       <div className="h-full w-full overflow-auto p-6 pl-3">
         <CustomerCharts
           customer={customer}
-          salesOrders={invoiceRefs?.length ?? 0}
+          salesOrders={totalCountOfProducts}
           totalAmountDue={totalAmountDue}
-          invoiceOutstanding={invoiceOutstanding}
+          invoiceOutstanding={invoicesOutstandingCount}
           avgInvoiceValue={avgInvoiceValue}
           avgUnitPrice={avgUnitPrice}
           avgOrderQty={avgOrderQty}
           avgProfitMargin={avgProfitMargin}
         />
-        <Tabs defaultValue="Invoices" className="mb-4 ">
+        <Tabs defaultValue="Invoices and Credits" className="mb-4">
           <TabsList className="w-full justify-start">
             <TabsTrigger value="Invoices and Credits">Invoices</TabsTrigger>
             <TabsTrigger value="Orders">Orders</TabsTrigger>
             <TabsTrigger value="Price Lists">Other</TabsTrigger>
           </TabsList>
-          <TabsContent value="Invoices" className="pt-4">
-            <InventoryTable
+          <TabsContent value="Invoices and Credits" className="pt-4">
+            <InvoiceTable
               invoices={formattedInvoices ?? []}
               companyName={customer.name ?? ''}
             />

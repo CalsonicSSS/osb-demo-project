@@ -87,13 +87,11 @@ const CustomerCharts = ({
 
         <div className="w-full rounded-md border p-8">
           <div className="flex items-center justify-between">
-            <h1 className="mb-1 text-xl font-semibold">Invoice Outstanding</h1>
+            <h1 className="mb-1 text-xl font-semibold">Invoices Outstanding</h1>
             <p className="text-tremor-default font-medium text-red-700">-22%</p>
           </div>
 
-          <h1 className="mb-4 text-2xl font-semibold">
-            {formatCurrency(invoiceOutstanding)}
-          </h1>
+          <h1 className="mb-4 text-2xl font-semibold">{invoiceOutstanding}</h1>
           <SparkAreaChart
             data={MOCK_PAST_DUE_DATA}
             categories={['Performance']}
@@ -131,9 +129,7 @@ const CustomerCharts = ({
             <p className="text-tremor-default font-medium text-red-700">-43%</p>
           </div>
 
-          <h1 className="mb-4 text-2xl font-semibold">
-            {formatCurrency(avgOrderQty)}
-          </h1>
+          <h1 className="mb-4 text-2xl font-semibold">{avgOrderQty}</h1>
           <SparkAreaChart
             data={MOCK_PAST_DUE_DATA}
             categories={['Performance']}

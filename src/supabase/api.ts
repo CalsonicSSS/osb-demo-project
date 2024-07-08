@@ -108,8 +108,8 @@ export async function getAllCustomersWithCustomMetrics() {
 
     if (customerError) throw customerError
 
-    // Initialize arrays to store additional data
-    const customerData = customers.map((customer) => ({
+    // Initialize all customer page arrays to store additional data
+    const customersWithCustomFields = customers.map((customer) => ({
       ...customer,
       invoice_count: 0,
       invoice_unpaid: 0,
@@ -117,64 +117,64 @@ export async function getAllCustomersWithCustomMetrics() {
       back_order_qty: 0,
     }))
 
-    for (const customer of customerData) {
-      // Fetch invoices for the customer
+    // customize fields for each customer
+    for (const customer of customersWithCustomFields) {
+      // Fetch all invoices for the customer from ar_invoice and ar_invoice_reference
+      // Fetch all invoices for the customer from ar_invoice
       const { data: invoices, error: invoiceError } = await supabase
         .from('ar_invoice')
-        .select('id, currency_value')
+        .select('id, currency_value, invoice_bal1')
         .eq('customer_id', customer.id)
 
       if (invoiceError) throw invoiceError
 
-      // Calculate invoice_count (number of invoices with non-null positive currency_value)
-      customer.invoice_count = invoices.filter(
+      // Fetch all invoice references for the customer, excluding 'C' document_type
+      const { data: invoiceReferences, error: invoiceRefError } = await supabase
+        .from('ar_invoice_reference')
+        .select('id, document_type')
+        .eq('customer_id', customer.id)
+        .neq('document_type', 'C')
+
+      if (invoiceRefError) throw invoiceRefError
+
+      const validInvoices = invoices.filter(
         (invoice) =>
           invoice.currency_value !== null && invoice.currency_value > 0,
+      )
+
+      // Combine and deduplicate invoice IDs
+      const allInvoiceIds = new Set([
+        ...validInvoices.map((inv) => inv.id),
+        ...invoiceReferences.map((ref) => ref.id),
+      ])
+
+      // Calculate invoice_count
+      customer.invoice_count = allInvoiceIds.size
+
+      // Calculate invoice_unpaid (number of unpaid invoices based on invoice_bal1)
+      customer.invoice_unpaid = invoices.filter(
+        (invoice) => invoice.invoice_bal1 !== null && invoice.invoice_bal1 > 0,
       ).length
 
-      // Get list of invoice ids
-      const invoiceIds = invoices.map((invoice) => invoice.id)
+      // Fetch SOR details for these invoices
+      const { data: sorDetails, error: sorDetailError } = await supabase
+        .from('sor_detail_rep')
+        .select('id, invoice_id, back_order_qty')
+        .in('invoice_id', Array.from(allInvoiceIds))
 
-      if (invoiceIds.length > 0) {
-        // Fetch SOR details for these invoices
-        const { data: sorDetails, error: sorDetailError } = await supabase
-          .from('sor_detail_rep')
-          .select('id, invoice_id, back_order_qty')
-          .in('invoice_id', invoiceIds)
+      if (sorDetailError) throw sorDetailError
 
-        if (sorDetailError) throw sorDetailError
+      // Calculate sor_qty (unique SOR ids)
+      const uniqueSorIds = new Set(sorDetails.map((detail) => detail.id))
+      customer.sor_qty = uniqueSorIds.size
 
-        // Calculate sor_qty (unique SOR ids)
-        const uniqueSorIds = new Set(sorDetails.map((detail) => detail.id))
-        customer.sor_qty = uniqueSorIds.size
-
-        // Calculate back_order_qty (sum of back_order_qty)
-        customer.back_order_qty = sorDetails.reduce((sum, detail) => {
-          return sum + (detail.back_order_qty ?? 0)
-        }, 0)
-
-        // Fetch invoice payments for these invoices
-        const { data: invoicePayments, error: invoicePaymentError } =
-          await supabase
-            .from('ar_invoice_pay')
-            .select('id, trn_value')
-            .in('id', invoiceIds)
-
-        if (invoicePaymentError) throw invoicePaymentError
-
-        // Calculate invoice_unpaid (number of unpaid invoices)
-        customer.invoice_unpaid = invoices.reduce((unpaidCount, invoice) => {
-          const totalPaid = invoicePayments
-            .filter((payment) => payment.id === invoice.id)
-            .reduce((sum, payment) => sum + Math.abs(payment.trn_value ?? 0), 0)
-          return (
-            unpaidCount + ((invoice.currency_value ?? 0) > totalPaid ? 1 : 0)
-          )
-        }, 0)
-      }
+      // Calculate back_order_qty (sum of back_order_qty)
+      customer.back_order_qty = sorDetails.reduce((sum, detail) => {
+        return sum + (detail.back_order_qty ?? 0)
+      }, 0)
     }
 
-    return customerData
+    return customersWithCustomFields
   } catch (error) {
     console.error('Error fetching customer data: ', error)
     return null
