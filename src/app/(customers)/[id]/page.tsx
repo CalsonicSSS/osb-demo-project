@@ -29,7 +29,7 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
 
   if (!customer) redirect('/404')
 
-  const { name } = customer
+  const { name, email } = customer
 
   const invoiceCount = invoices?.length ?? 0
 
@@ -103,7 +103,9 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
         <Accordion type="single" collapsible>
           <AccordionItem value="item-1">
             <AccordionTrigger>Contact Info</AccordionTrigger>
-            <AccordionContent>Mock stuff</AccordionContent>
+            <AccordionContent className="pl-3">
+              {email !== null && email !== ' ' ? email : 'Unavailable'}
+            </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2">
             <AccordionTrigger>Payment Info</AccordionTrigger>

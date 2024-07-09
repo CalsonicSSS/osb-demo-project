@@ -51,10 +51,13 @@ Invoice ${index + 1}:
   )
   .join('\n')}
 
-Company Name: ${companyName}
+Customer Company Name: ${companyName}
 Email Goal: ${emailGoal}
 
-The email should be professional, concise, and tailored to the specific context provided. Consider the invoice details, the relationship between the sender and receiver, and the specific goal of the email. Based on the invoice details, determine if this is a reminder for unpaid invoices, a follow-up on partially paid invoices, or a confirmation of fully paid invoices (There could be other purpose based on specific email goal provided). Adjust the tone and content accordingly. Maintain a tone appropriate for B2B communication in the industrial manufacturing sector.
+Email generation requirements:
+- The email should be professional, concise, and tailored to the specific context provided above. 
+- Consider each of the invoice details list above, and the specific goal of the email. Based on the invoice details and email goals, determine if this is a reminder for unpaid invoices, a follow-up on partially paid invoices, or a confirmation of fully paid invoices (There could be other specifics tasks or simple calculation from email goal provided). Adjust the tone and content accordingly. Maintain a tone appropriate for B2B communication in the industrial manufacturing sector.
+- The sender is always from company called "OS&B". 
 
 ${
   selectedInvoices.length > 1
@@ -62,7 +65,7 @@ ${
     : ''
 }
 
-Format the output using Markdown for better readability, including proper headings, lists, and tables where appropriate.`
+Format the email output using Markdown for better readability, including proper headings, lists, and tables where appropriate.`
 
     await complete(prompt)
   }
