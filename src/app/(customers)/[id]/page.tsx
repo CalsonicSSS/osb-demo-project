@@ -74,6 +74,7 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
 
   const avgUnitCost = totalUnitPriceCost / totalCountOfProducts || 0
 
+  // added rounding and fixed to 2 decimal places for avgOrderQty
   const avgOrderQty =
     totalCountOfProducts > 0
       ? Number((totalCountOfProducts / invoiceCount).toFixed(2))
