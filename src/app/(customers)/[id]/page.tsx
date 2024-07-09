@@ -75,7 +75,9 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
   const avgUnitCost = totalUnitPriceCost / totalCountOfProducts || 0
 
   const avgOrderQty =
-    totalCountOfProducts > 0 ? totalCountOfProducts / invoiceCount : 0
+    totalCountOfProducts > 0
+      ? Number((totalCountOfProducts / invoiceCount).toFixed(2))
+      : 0
 
   const avgProfitMargin =
     ((avgUnitPrice - avgUnitCost) / avgUnitPrice) * 100 || 100
