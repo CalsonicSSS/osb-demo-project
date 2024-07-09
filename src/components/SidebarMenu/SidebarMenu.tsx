@@ -21,7 +21,6 @@ type SidebarMenuProps = {
 
 const SidebarMenu = ({ isCollapsed, setIsCollapsed }: SidebarMenuProps) => {
   const toggleSidebar = () => setIsCollapsed(!isCollapsed)
-
   return (
     <div
       className={cn(
