@@ -13,6 +13,7 @@ type CustomerChartsProps = {
   avgUnitPrice: number
   avgOrderQty: number
   avgProfitMargin: number
+  allowableCredits: number
 }
 
 const CustomerCharts = ({
@@ -24,6 +25,7 @@ const CustomerCharts = ({
   avgUnitPrice,
   avgOrderQty,
   avgProfitMargin,
+  allowableCredits,
 }: CustomerChartsProps) => {
   const credit = customer?.credit_limit ?? 0
   const currentBalance = customer?.current_balance ?? 0
@@ -36,10 +38,10 @@ const CustomerCharts = ({
         <div className="w-full rounded-md border p-8">
           <h1 className="mb-1 text-xl font-semibold">Allowable credit</h1>
           <h2 className="mb-4 text-2xl font-semibold">
-            {formatCurrency(currentBalance)}
+            {formatCurrency(allowableCredits)}
           </h2>
           <p className="mt-6 flex items-center justify-between">
-            <span>{formatCurrency(currentBalance)}</span>
+            <span>{formatCurrency(allowableCredits)}</span>
             <span>{formatCurrency(credit)}</span>
           </p>
           <ProgressBar

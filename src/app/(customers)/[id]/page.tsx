@@ -3,6 +3,8 @@ import {
   getCustomerInvoicesWithProducts,
   getCustomerInvoiceRefs,
   getCustomerInvoicesPay,
+  getCustomerAvgOrderQty,
+  getCustomerAllowableCredits,
 } from '@/supabase/api'
 import { redirect } from 'next/navigation'
 import {
@@ -74,11 +76,11 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
 
   const avgUnitCost = totalUnitPriceCost / totalCountOfProducts || 0
 
-  // added rounding and fixed to 2 decimal places for avgOrderQty
-  const avgOrderQty =
-    totalCountOfProducts > 0
-      ? Number((totalCountOfProducts / invoiceCount).toFixed(2))
-      : 0
+  // added corrected avg order qty calculation
+  const avgOrderQty = await getCustomerAvgOrderQty(id)
+
+  // added corrected allowed credits calculation
+  const allowableCredits = await getCustomerAllowableCredits(id)
 
   const avgProfitMargin =
     ((avgUnitPrice - avgUnitCost) / avgUnitPrice) * 100 || 100
@@ -125,8 +127,9 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
           invoiceOutstanding={invoicesOutstandingCount}
           avgInvoiceValue={avgInvoiceValue}
           avgUnitPrice={avgUnitPrice}
-          avgOrderQty={avgOrderQty}
+          avgOrderQty={avgOrderQty ?? 0}
           avgProfitMargin={avgProfitMargin}
+          allowableCredits={allowableCredits ?? 0}
         />
         <Tabs defaultValue="Invoices and Credits" className="mb-4">
           <TabsList className="w-full justify-start">
