@@ -11,7 +11,7 @@ type CustomerChartsProps = {
   invoiceOutstanding: number
   avgInvoiceValue: number
   avgUnitPrice: number
-  avgOrderQty: number
+  avgOrderQty: string | number
   avgProfitMargin: number
   allowableCredits: number
 }

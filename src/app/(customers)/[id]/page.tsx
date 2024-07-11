@@ -3,8 +3,7 @@ import {
   getCustomerInvoicesWithProducts,
   getCustomerInvoiceRefs,
   getCustomerInvoicesPay,
-  getCustomerAvgOrderQty,
-  getCustomerAllowableCredits,
+  getAllInvoiceProducts,
 } from '@/supabase/api'
 import { redirect } from 'next/navigation'
 import {
@@ -30,6 +29,32 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
   ])
 
   if (!customer) redirect('/404')
+
+  // corrected avg order qty calc
+  const allInvoiceIds = new Set([
+    ...(invoices?.map((invoice) => invoice.id) ?? []),
+    ...(invoiceRefs?.map((invoiceRef) => invoiceRef.id) ?? []),
+  ])
+
+  const allProducts = await getAllInvoiceProducts(Array.from(allInvoiceIds))
+  const totalOrderQty = allProducts?.reduce(
+    (acc, curr) => acc + curr.order_qty,
+    0,
+  )
+  const avgOrderQty = totalOrderQty
+    ? Number(totalOrderQty / allProducts!.length).toFixed(2)
+    : 0
+
+  // corrected allowable credits calc
+  const totalNetInvoiceBal = invoices?.reduce(
+    (acc, curr) => acc + curr.invoice_bal1,
+    0,
+  )
+
+  const allowableCredits =
+    customer.credit_limit && totalNetInvoiceBal
+      ? customer.credit_limit - totalNetInvoiceBal
+      : 0
 
   const { name, email } = customer
 
@@ -76,12 +101,6 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
 
   const avgUnitCost = totalUnitPriceCost / totalCountOfProducts || 0
 
-  // added corrected avg order qty calculation
-  const avgOrderQty = await getCustomerAvgOrderQty(id)
-
-  // added corrected allowed credits calculation
-  const allowableCredits = await getCustomerAllowableCredits(id)
-
   const avgProfitMargin =
     ((avgUnitPrice - avgUnitCost) / avgUnitPrice) * 100 || 100
 
@@ -127,7 +146,7 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
           invoiceOutstanding={invoicesOutstandingCount}
           avgInvoiceValue={avgInvoiceValue}
           avgUnitPrice={avgUnitPrice}
-          avgOrderQty={avgOrderQty ?? 0}
+          avgOrderQty={avgOrderQty}
           avgProfitMargin={avgProfitMargin}
           allowableCredits={allowableCredits ?? 0}
         />

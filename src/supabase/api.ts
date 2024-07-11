@@ -85,6 +85,20 @@ export const getInvoiceProducts = async (id: string) => {
   }
 }
 
+export const getAllInvoiceProducts = async (allInvoiceIds: string[]) => {
+  const cookieStore = cookies()
+  const supabase = createServerClient(cookieStore)
+  try {
+    const { data: products } = await supabase
+      .from('sor_detail_rep')
+      .select('order_qty')
+      .in('invoice_id', allInvoiceIds)
+    return products
+  } catch (error) {
+    return null
+  }
+}
+
 export const getCustomerInvoicesWithProducts = async (userId: string) => {
   const invoices = await getCustomerInvoices(userId)
   const invoiceIds = invoices?.map((invoice) => invoice.id) ?? []
@@ -177,100 +191,6 @@ export async function getAllCustomersWithCustomMetrics() {
     return customersWithCustomFields
   } catch (error) {
     console.error('Error fetching customer data: ', error)
-    return null
-  }
-}
-
-// ------------------------------------------------------------------------------------------------------------------------
-// corrected calculation on individual customer page
-
-// 1. avg order qty
-export async function getCustomerAvgOrderQty(customerId: string) {
-  const cookieStore = cookies()
-  const supabase = createServerClient(cookieStore)
-
-  try {
-    // Fetch invoice IDs from ar_invoice
-    const { data: arInvoices, error: arInvoiceError } = await supabase
-      .from('ar_invoice')
-      .select('id')
-      .eq('customer_id', customerId)
-
-    if (arInvoiceError) throw arInvoiceError
-
-    // Fetch invoice IDs from ar_invoice_reference
-    const { data: arInvoiceRefs, error: arInvoiceRefError } = await supabase
-      .from('ar_invoice_reference')
-      .select('id')
-      .eq('customer_id', customerId)
-
-    if (arInvoiceRefError) throw arInvoiceRefError
-
-    // Combine and deduplicate invoice IDs
-    const allInvoiceIds = new Set([
-      ...arInvoices.map((invoice) => invoice.id),
-      ...arInvoiceRefs.map((ref) => ref.id),
-    ])
-
-    // Fetch order quantities from sor_detail_rep
-    const { data: sorDetails, error: sorDetailError } = await supabase
-      .from('sor_detail_rep')
-      .select('order_qty')
-      .in('invoice_id', Array.from(allInvoiceIds))
-
-    if (sorDetailError) throw sorDetailError
-
-    // Calculate average order quantity
-    const totalOrderQty = sorDetails.reduce(
-      (sum, detail) => sum + (detail.order_qty || 0),
-      0,
-    )
-    const avgOrderQty =
-      sorDetails.length > 0 ? totalOrderQty / sorDetails.length : 0
-
-    return Number(avgOrderQty.toFixed(2)) // Round to 2 decimal places
-  } catch (error) {
-    console.error('Error calculating average order quantity:', error)
-    return null
-  }
-}
-
-// 2. allowable credits for each customer
-
-export async function getCustomerAllowableCredits(customerId: string) {
-  const cookieStore = cookies()
-  const supabase = createServerClient(cookieStore)
-
-  try {
-    const { data: targetCustomer, error: arCustomerError } = await supabase
-      .from('ar_customer')
-      .select('credit_limit')
-      .eq('id', customerId)
-
-    if (arCustomerError) throw arCustomerError
-
-    const customerCreditLimit = targetCustomer[0].credit_limit
-
-    const { data: targetCustomerArinvoice, error: arInvoiceError } =
-      await supabase
-        .from('ar_invoice')
-        .select('invoice_bal1')
-        .eq('customer_id', customerId)
-
-    if (arInvoiceError) throw arInvoiceError
-
-    const totalNetInvoiceBalance = targetCustomerArinvoice.reduce(
-      (acc, curr) => acc + curr.invoice_bal1,
-      0,
-    )
-
-    const allowableCredits = customerCreditLimit
-      ? customerCreditLimit - totalNetInvoiceBalance
-      : 0
-
-    return allowableCredits
-  } catch (error) {
-    console.error('Error calculating allowable credits quantity:', error)
     return null
   }
 }
