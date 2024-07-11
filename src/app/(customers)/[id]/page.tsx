@@ -30,7 +30,6 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
 
   if (!customer) redirect('/404')
 
-  // corrected avg order qty calc
   const allInvoiceIds = new Set([
     ...(invoices?.map((invoice) => invoice.id) ?? []),
     ...(invoiceRefs?.map((invoiceRef) => invoiceRef.id) ?? []),
@@ -45,7 +44,6 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
     ? Number(totalOrderQty / allProducts!.length).toFixed(2)
     : 0
 
-  // corrected allowable credits calc
   const totalNetInvoiceBal = invoices?.reduce(
     (acc, curr) => acc + curr.invoice_bal1,
     0,
