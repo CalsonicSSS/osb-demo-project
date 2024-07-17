@@ -55,17 +55,17 @@ Customer Company Name: ${companyName}
 Email Goal: ${emailGoal}
 
 Email generation requirements:
-- The email should be professional, concise, and tailored to the specific context provided above. 
-- Consider each of the invoice details list above, and the specific goal of the email. Based on the invoice details and email goals, determine if this is a reminder for unpaid invoices, a follow-up on partially paid invoices, or a confirmation of fully paid invoices (There could be other specifics tasks or simple calculation from email goal provided). Adjust the tone and content accordingly. Maintain a tone appropriate for B2B communication in the industrial manufacturing sector.
+- The email should be professional and concise. Maintain a tone appropriate for B2B communication in the industrial manufacturing sector. Adjust the tone accordingly. 
+- Consider each of the invoice details list above and the "Email Goal" provided, generate a tailored email content. (There could be some simple calculations needed based on the goal of email given).
 - The sender is always from company called "OS&B". 
 
 ${
   selectedInvoices.length > 1
-    ? 'Please include a table summarizing the invoices, their amounts, and balances.'
+    ? '- Please include a invoices table summarizing information follow system table formatting instructions.'
     : ''
 }
-
-Format the email output using Markdown for better readability, including proper headings, lists, and tables where appropriate.`
+- Remember to strictly follow the Markdown structure provided in the system instructions, including all sections (Subject, Greeting, Body, Invoice Summary, Closing, and Signature).
+`
 
     await complete(prompt)
   }
@@ -173,23 +173,27 @@ Format the email output using Markdown for better readability, including proper 
                       {...props}
                     />
                   ),
-                  ul: ({ node, ...props }) => (
-                    <ul className="list-disc space-y-1 pl-5" {...props} />
-                  ),
-                  ol: ({ node, ...props }) => (
-                    <ol className="list-decimal space-y-1 pl-5" {...props} />
-                  ),
-                  li: ({ node, ...props }) => (
-                    <li className="mb-1" {...props} />
-                  ),
                   h1: ({ node, ...props }) => (
-                    <h1 className="mb-2 text-2xl font-bold" {...props} />
+                    <h1 className="mb-4 mt-6 text-2xl font-bold" {...props} />
                   ),
                   h2: ({ node, ...props }) => (
-                    <h2 className="mb-2 text-xl font-semibold" {...props} />
+                    <h2
+                      className="mb-3 mt-5 text-xl font-semibold"
+                      {...props}
+                    />
                   ),
                   h3: ({ node, ...props }) => (
-                    <h3 className="mb-2 text-lg font-medium" {...props} />
+                    <h3 className="mb-2 mt-4 text-lg font-medium" {...props} />
+                  ),
+                  p: ({ node, ...props }) => <p className="mb-4" {...props} />,
+                  ul: ({ node, ...props }) => (
+                    <ul className="mb-4 list-disc space-y-2 pl-5" {...props} />
+                  ),
+                  ol: ({ node, ...props }) => (
+                    <ol
+                      className="mb-4 list-decimal space-y-2 pl-5"
+                      {...props}
+                    />
                   ),
                 }}
               >
